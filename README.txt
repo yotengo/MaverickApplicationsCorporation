@@ -7,3 +7,5 @@ The directory structure of our respository.
 your repository.
 - The directory structure should include areas for the project source code, planning
 documents, meeting minutes, project reports.)
+
+our structure: docs has documentation
