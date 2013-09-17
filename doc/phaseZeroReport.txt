@@ -17,3 +17,6 @@ Git policies:
 Include a message explaining a commit. When it is necessary to merge a file, make sure it is merged in such a way that it doesn't break previously written code without attempting to fix it. If there are existing problems because of a commit, explain it in the commit message.
 
 If there are errors in previously written code caused by a commit, communicate it directly to the author of the broken code so they can work together to fix it if necessary.
+
+
+Editing the document.
