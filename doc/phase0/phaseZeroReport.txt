@@ -10,7 +10,7 @@ Direct communication is done through email. We have a trello account to communic
 Roles:
 Ryan Carlson - Testing, PHP, JQuery, Javascript
 Stephen Pandorf - 
-Kevin Rock - 
+Kevin Rock - Testing, PHP
 Jeremy Wagner - 
 
 Git policies:
