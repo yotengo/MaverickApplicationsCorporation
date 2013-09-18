@@ -2,6 +2,7 @@ Phase Zero Report
 Team 2 Maverick Applications Corporation
 
 1) 
+Technology: PHP, MySQL, JQuery/Javascript, jsFiddle
 Webhandin info: rcarlso
 
 2)
