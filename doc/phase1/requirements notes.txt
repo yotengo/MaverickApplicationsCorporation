@@ -1,0 +1,26 @@
+Requirements
+
+-Users-everyone has unique profile tied to email address
+	-registration
+		-firstname,lastname,username,email, password
+		-email must be verified before use
+	-username-unique, cannot be changed
+	-password-no requirements, show strength of password, 
+		-password recovery-throught email
+		-change passwords-through email
+	-user profile
+		-photo-optional profile pic
+			-limit size(tbd)
+-"Tweets"-200 char posts
+	-May contain only english characters, hashtags, usertags
+	-may contain urls, but they cannot be hyperlinks
+	-Tweets are timestampsed
+	-OPTIONAL-deletion of tweets
+	-Options available on posted tweets:
+		-Reply-respond to tweet
+			-should be linked to previous tweet
+		-Like-favorites the tweet	
+			-number of likes is displayed with each tweet
+			-users can see tweets they like
+			-users can sort tweets by number of likes
+		-OPTIONAL-Retweet-repost tweet on your wall with usertag of original poster
