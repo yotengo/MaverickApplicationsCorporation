@@ -11,7 +11,7 @@ Direct communication is done through email. We have a trello account to communic
 Roles:
 Ryan Carlson - Testing, PHP, JQuery, Javascript
 Stephen Pandorf - Testing, JQuery, Javascript
-Kevin Rock - Testing, PHP
+Kevin Rock - Testing, PHP, HTML
 Jeremy Wagner - 
 
 Git policies:
