@@ -1,0 +1,12 @@
+3.1 User Interfaces
+	The user interface will be a dashboard page that can lead your navigation in the application.  Features needed include the Main or Dashboard page, a page for new users without an account to create an account, a Forgotten password page which will allow you to reset your password, a profile page with a profile picture specific to that user's profile, and an account settings page to change your password or profile picture.
+
+3.2 Hardware Interfaces
+	The software will require a MySQL database for information tied to users including their tweets and profile picture.
+
+3.3 Software Interfaces
+	This project will use a Java Applet to connect to the MySQL server from JavaScript. <Certain software will be used for the dashboard portion of the product and will be
+determined by the implementing team and this is a placeholder for that information.>
+
+3.4 Communication Interfaces
+	The project will use communication between the MySQL database and the browser by using a Java Applet to connect between the server-side MySQL and client-side JavaScript.
