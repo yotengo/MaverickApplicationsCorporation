@@ -1,0 +1,6 @@
+The ERD for our application conists of 5 tables within of our database.  The login 
+table contains user passwords for logging into the website.  This connects with 
+the user table which contains information for profile information.  The user table
+connects with following, tweets, and favorites.  Following contains user associations.  
+Favorites contains information of saved tweets.  Tweets may contain one or more hashtag
+which is merged with the Hashtag table.  

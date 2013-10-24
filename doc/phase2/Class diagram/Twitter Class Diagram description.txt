@@ -1,0 +1,3 @@
+The Class Diagram breaks the application in parts and describes their associated
+functions.  Users start on a login page and are directed either to register or to
+the homepage.  From the homepage they can post, view account settings, search, and view followers/followees. 
