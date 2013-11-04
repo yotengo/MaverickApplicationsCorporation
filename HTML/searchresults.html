@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<!--this will be the first page on the site that users will see-->
+	<head>
+		<title>
+		Search
+		</title>
+		<script src="script.js">
+		</script>
+	</head>
+	<body>
+		<p>Search results here</p>
+		<form action="searchresults.html" method="get">
+			<input type="text" name="term">
+			<select name="option">
+				<option value="fname">First Name</option>
+				<option value="lname">Last Name</option>
+				<option value="uname">Username</option>
+				<option value="htag">Hashtag</option>
+			</select>
+			<button type="submit" onclick="formSubmit()" value="Submit form">
+			Search
+			</button>
+		</form> 
+		<br/>
+		<form action="home.html" method="get">
+			<button type="submit" onclick="formSubmit()" value="Submit form">
+			Home
+			</button>
+		</form> 
+		
+		<!--below code doesn't work-->
+		<?php
+			echo "Php is working.";
+		?>
+		
+	</body>
+</html>

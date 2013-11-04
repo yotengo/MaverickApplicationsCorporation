@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+	<head>
+		<title>
+		Recover Password
+		</title>
+		<script src="script.js">
+		</script>
+		<script>
+		function validateForm()
+			{
+				var x=document.forms["email"]["uname"].value;
+				if (x==null || x=="")
+				{
+					alert("Must provide a valid username.");
+						return false;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<form name="email" action="email_pw.html" method="post" onsubmit="return validateForm()">
+			Username: <input type="text" name="uname"><br>
+			<button type="submit" onclick="formSubmit()" value="Submit form">
+			Email
+			</button>
+		</form> 
+		
+		<!--ironically the below code doesn't work-->
+	<?php
+	
+		echo "Php is working.";
+		?>
+	</body>
+</html>

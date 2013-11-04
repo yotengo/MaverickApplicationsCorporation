@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<title>
+		Create an account
+		</title>
+		<script src="script.js">
+		</script>
+		<script>
+			function validateForm()
+			{
+				var x=document.forms["create"]["uname"].value;
+				if (x==null || x=="")
+				{
+					alert("User name must be filled out");
+						return false;
+				}
+				x=document.forms["create"]["pword"].value;
+				
+				
+				/*if (x==null || x=="")
+				{
+					alert("Password must be filled out");
+						return false;
+				}*/
+				
+				if (x.length<5)//arbitrary length to be defined later
+				{
+					if (x==null || x=="")
+					{
+						alert("Password must be filled out");
+						return false;
+					}
+					
+					alert("Password must be at least x (5 for now) characters long.");
+					return false;
+				}
+				
+				var y=document.forms["create"]["pword2"].value;
+				if(x!=y)
+				{
+				alert("Passwords don't match");
+				return false;
+				}
+				
+				x=document.forms["create"]["fname"].value;
+				if (x==null || x=="")
+				{
+					alert("First name must be filled out");
+						return false;
+				}
+				x=document.forms["create"]["lname"].value;
+				if (x==null || x=="")
+				{
+					alert("Last name must be filled out");
+						return false;
+				}
+				
+				x=document.forms["create"]["email"].value;
+				if (x==null || x=="")
+				{
+					alert("Email must be filled out");
+						return false;
+				}
+				
+				
+				
+			}
+			
+	
+		</script>
+		
+	
+	</head>
+	<body>
+		<form name="create" action="add.php" method="post" onsubmit="return validateForm()">
+			First Name: <input type="text" name="fname"><br>
+			Last Name: <input type="text" name="lname"><br>
+			Email: <input type="text" name="email"><br>
+			Username: <input type="text" name="uname"><br>
+			Password: <input type="password" name="pword"><br>
+			Confirm Password: <input type="password" name="pword2"><br>
+			<input type="submit" value="Submit">
+		</form> 
+		<!--------
+		<?php
+		echo "PHP is working.";
+		?>
+		---->
+		</body>
+</html>

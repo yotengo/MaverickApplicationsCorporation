@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!--this will be the first page on the site that users will see-->
+	<head>
+		<title>
+		Login
+		</title>
+		<script src="script.js">
+		</script>
+		<script>
+			function validateForm()
+			{
+				var x=document.forms["login"]["uname"].value;
+				if (x==null || x=="")
+				{
+					alert("User name must be filled out");
+						return false;
+				}
+				x=document.forms["login"]["pword"].value;
+				if (x==null || x=="")
+				{
+					alert("Password must be filled out");
+						return false;
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<form name="login" action="home.html" method="post" onsubmit="return validateForm()">
+			Username: <input type="text" name="uname"><br>
+			Password: <input type="password" name="pword"><br>
+			<button type="submit" onclick="formSubmit()" value="Submit form">
+			Login
+			</button>
+		</form> 
+		<p>
+		<a href="create.html">Create an account</a>
+		</p>
+		<p>
+		<a href="recover.html">Forgot password?</a>
+		</p>
+		
+		<!--below code doesn't work-->
+		<?php
+			echo "Php is working.";
+		?>
+		
+	</body>
+</html>
