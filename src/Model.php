@@ -194,6 +194,7 @@ Class Model{
 	 * @return nothing to return
 	 */
 	
+	//TESTED
 	function createHashtag($hashtag)
 	{
 		// Create connection
@@ -226,9 +227,30 @@ Class Model{
 	 * @param takes in post's and hashtag's IDs
 	 * @return nothing to return
 	 */
-	function postHashtag($post,$hashtag)
+	//NEEDS TESTING
+	function postHashtag($postID,$hashtagID)
 	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"INSERT INTO PostHashtags(UserID,PostID) VALUES (?,?)");
+			
+			$query->bind_param("dd",$postID,$hashtagID);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
 	}
 
 	/**
@@ -237,9 +259,30 @@ Class Model{
 	 * the databse.
 	 * @return nothing to return
 	 */
-	function unFollowUser($userA,$userB)
+	//TESTED
+	function unFollowUser($userIDA,$userIDB)
 	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"DELETE FROM UserFollowing WHERE UserID = ? AND FollowingUserID = ?");
+			
+			$query->bind_param("dd",$userIDA,$userIDB);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
 	}
 
 	/**
@@ -250,9 +293,115 @@ Class Model{
 	 * @param Takes in the ID of the post and updates the likeCount.
 	 * @return nothing to return
 	 */
-	function likePost($post)
+	//NEEDS TESTING
+	function likePost($postID)
 	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"UPDATE Post SET NumOfLikes = NumOfLikes + 1 WHERE PostID = ?");
+			
+			$query->bind_param("d",$postID);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
+	
+	/**
+	 * This function takes in the userID and returns a list of all the posts that should show
+	 * up on their main page. This will be posts they posted, posts by users they follow, and hashtags they follow.
+	 * The default sorting is by time.
+	 * 
+	 * @param takes in the userID of the current user.
+	 * @return returns a list of posts ordered by time.
+	 */
+	//NOT FINISHED
+	//FINISH THE THREE HELPER METHODS FIRST
+	function getMainPagePosts($userID)
+	{
+		
+	}
+	
+	/**
+	 * This function returns the posts by the indicated user
+	 * 
+	 * @param $userID
+	 * @return returns a list of posts by the given user
+	 */
+	//NOT FINISHED
+	function getUserPosts($userID)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM Post WHERE UserID = ?");
+			
+			$query->bind_param("d",$userID);
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
+				
+				//testing
+				$post->printPost();
+				
+				//NOW WE NEED A LIST FOR OUR NEW POST OBJECTS, THEN RETURN IT.
+				
+				
+
+			}
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
+	
+	/**
+	 * This function returns the posts by the users that the given user is following
+	 * 
+	 * @param $userID
+	 * @return returns a list of posts
+	 */
+	//NOT FINISHED
+	function getFollowedUserPosts($userID)
+	{
+		
+	}
+	/**
+	 * This function returns a list of posts that have hashtags that the given user is following.
+	 * 
+	 * @param $userID
+	 * @return returns a list of posts
+	 */
+	//NOT FINISHED
+	function getFollowedHashtagPosts($userID)
+	{
+		
 	}
 
 
@@ -287,22 +436,42 @@ class Hashtag
  */
 class Post
 {
+	private $postID;
 	private $userID;
 	private $post;
 	private $timePosted;
 	private $numOfLikes;
 
-	public function Post($userID,$post,$timePosted,$numOfLikes)
+	//this constructor doesn't give postID.
+//	public function Post($userID,$post,$timePosted,$numOfLikes)
+//	{
+//		$this->userID = $userID;
+//		$this->post = $post;
+//		$this->timePosted = $timePosted;
+//		$this->numOfLikes = $numOfLikes;
+//	}
+	
+	//this constructor gives postID
+	//can't overload constructors in php... so the postID has to be given
+	//it just won't be used when not needed(null).
+	public function Post($postID,$userID,$post,$timePosted,$numOfLikes)
 	{
+		$this->postID = $postID;
 		$this->userID = $userID;
 		$this->post = $post;
 		$this->timePosted = $timePosted;
 		$this->numOfLikes = $numOfLikes;
 	}
 	
-	function printTimePosted()
+	function printPost()
 	{
-		echo $this->timePosted;
+		echo '-------------' . PHP_EOL;
+		echo $this->postID . PHP_EOL;
+		echo $this->userID . PHP_EOL;
+		echo $this->post . PHP_EOL;
+		echo $this->timePosted . PHP_EOL;
+		echo $this->numOfLikes . PHP_EOL;
+		echo '-------------' . PHP_EOL;
 	}
 	
 	function getUserID()
@@ -335,6 +504,7 @@ class Post
  */
 class User
 {
+	private $userID;
 	private $userName;
 	private $password;
 	private $email;
@@ -398,7 +568,15 @@ $model = new Model();
 //$model->post($post);
 
 //testing creating a hashtag
-$hashtag = new Hashtag("Waffles");
-$model->createHashtag($hashtag);
+//$hashtag = new Hashtag("Waffles");
+//$model->createHashtag($hashtag);
+
+//testing unfollowing a user
+//$model->unFollowUser(2,5);
+
+//testing get getUserPosts
+$model->getUserPosts(1);
+
+
 
 ?>
