@@ -54,6 +54,7 @@ Class Model{
 	 * @param takes in a user object and creates a new entry in the user table.
 	 * @return nothing to return
 	 */
+	//TESTED
 	function registerUser($user)
 	{
 		// Create connection
@@ -85,30 +86,138 @@ Class Model{
 		mysqli_close($con);
 	}
 
-	function followUser($userA,$userB)
+	/**
+	 * This function creates a join table in the database for a user to follow another user.
+	 * 
+	 * @param this functions takes the user ids of the users to follow the other. In this case, userA is to follow userB.
+	 * @return nothing to return
+	 */
+	
+	//TESTED
+	function followUser($userIDA,$userIDB)
 	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
-	}
-
-	function followHashtag($user,$hashtag)
-	{
-
-	}
-
-	function post($user,$post)
-	{
-
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"INSERT INTO UserFollowing(UserID,FollowingUserID) VALUES (?,?)");
+			
+			$query->bind_param("dd",$userIDA,$userIDB);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
 	}
 
 	/**
-	 * This function creates a hashtag if the hashtag is not already in the system.
+	 * This method creates an entry in the hashtag following table to allow
+	 * the user to follow the indicated hashtag
+	 * 
+	 * @param takes a userID and hashtagID
+	 */
+	//NEEDS TESTING
+	function followHashtag($userID,$hashtagID)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"INSERT INTO HashtagFollowing(UserID,HashtagID) VALUES (?,?)");
+			
+			$query->bind_param("dd",$userID,$hashtagID);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
+
+	/**
+	 * This function will create an entry in the post table.
+	 * 
+	 * @param takes a post object.
+	 */
+	//TESTED
+	function post($post)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			$userID = $post->getUserID();
+			$thePost = $post->getPost();
+			$timePosted = $post->getTimePosted();
+			$numOfLikes = $post->getNumOfLikes();
+			
+			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
+			
+			$query->bind_param("dssd",$userID,$thePost,$timePosted,$numOfLikes);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
+
+	/**
+	 * This function creates an entry in the hashtag table. This should be called only
+	 * if the hashtag is not already in the system.
 	 *
 	 * @param takes in a hashtag object in the database
 	 * @return nothing to return
 	 */
+	
 	function createHashtag($hashtag)
 	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			$theHashtag = $hashtag->getHashtag();
+			
+			$query = mysqli_prepare($con,"INSERT INTO Hashtag(Hashtag) VALUES (?)");
+			
+			$query->bind_param("s",$theHashtag);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
 	}
 
 	/**
@@ -150,6 +259,80 @@ Class Model{
 
 }
 
+/**
+ * Test stub for hashtag
+ * 
+ * @author Ryan
+ *
+ */
+class Hashtag
+{
+	private $hashtag;
+	
+	public function Hashtag($hashtag)
+	{
+		$this->hashtag = $hashtag;
+	}
+	
+	function getHashtag()
+	{
+		return $this->hashtag;
+	}
+}
+
+/**
+ * This is a stub for the post class
+ * @author Ryan
+ *
+ */
+class Post
+{
+	private $userID;
+	private $post;
+	private $timePosted;
+	private $numOfLikes;
+
+	public function Post($userID,$post,$timePosted,$numOfLikes)
+	{
+		$this->userID = $userID;
+		$this->post = $post;
+		$this->timePosted = $timePosted;
+		$this->numOfLikes = $numOfLikes;
+	}
+	
+	function printTimePosted()
+	{
+		echo $this->timePosted;
+	}
+	
+	function getUserID()
+	{
+		return $this->userID;
+	}
+
+	function getPost()
+	{
+		return $this->post;
+	}
+
+	function getTimePosted()
+	{
+		return $this->timePosted;
+	}
+
+	function getNumOfLikes()
+	{
+		return $this->numOfLikes;
+	}
+
+}
+
+/**
+ * This is a stub for the user class
+ * 
+ * @author Ryan
+ *
+ */
 class User
 {
 	private $userName;
@@ -199,11 +382,23 @@ class User
 
 }
 
-$user = new User("yotengo","1234","yotengo@gmail.com","Ryan","Carlson");
 
 
 $model = new Model();
-$model->registerUser($user);
 
+//testing userFollowing
+//$model->followUser(1, 5);
+
+//testing user registration
+//$user = new User("yotengo","1234","yotengo@gmail.com","Ryan","Carlson");
+//$model->registerUser($user);
+
+//testing creating new post
+//$post = new Post(1,"I like cheese.","date",0);
+//$model->post($post);
+
+//testing creating a hashtag
+$hashtag = new Hashtag("Waffles");
+$model->createHashtag($hashtag);
 
 ?>
