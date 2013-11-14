@@ -18,7 +18,16 @@
  *
  */
 Class Model{
-
+	
+	function __construct(){
+//      $this->db = new mysqli('cse.unl.edu', 'rcarlso', 'a@9VUi', 'rcarlso');
+		$this->db = new mysqli('localhost', 'root', 'stephen', 'twatter');
+		//Checks that connection was successful
+		if (mysqli_connect_errno($this->db))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+    }
 	function test()
 	{
 		// Create connection
@@ -57,34 +66,50 @@ Class Model{
 	//TESTED
 	function registerUser($user)
 	{
-		// Create connection
-		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-
-		// Check connection
-		if (mysqli_connect_errno($con))
-		{
-			echo "Failed to connect to MySQL: " . mysqli_connect_error();
-		}
-		else
-		{
-			$userName = $user->getUserName();
-			$password = $user->getPassword();
-			$email = $user->getEmail();
-			$firstName = $user->getFirstName();
-			$lastName = $user->getLastName();
-			
-			$query = mysqli_prepare($con,"INSERT INTO User(Username,Password,Email,FirstName,LastName) VALUES (?,?,?,?,?)");
-			
+			$userName = $user['username'];
+			$password = $user['password'];
+			$email = $user['email'];
+			$firstName = $user['firstname'];
+			$lastName = $user['lastname'];			
+			$query = $this->db->prepare("INSERT INTO User(Username,Password,Email,FirstName,LastName) VALUES (?,?,?,?,?)");			
 			//the string "sssss" indicates 5 strings for the database, since their type in php is not explicit.
-			$query->bind_param("sssss",$userName,$password,$email,$firstName,$lastName);
-			
+			$query->bind_param("sssss",$userName,$password,$email,$firstName,$lastName);			
 			$query->execute();
-				
-		}
-			
-		//close connection
-		mysqli_close($con);
+			return true;	
 	}
+	public function cookieCheck($username){
+        $query = $this->db->prepare("SELECT Users.* FROM Users WHERE Users.username = ?");
+        $query->bind_param("s", $username);
+		$query->execute():
+		$check = $this->db->query($query);
+        if($check->num_rows > 0){
+            return $check->fetch_object();
+        }
+        else{
+            return false;
+        }
+    }
+	
+    public function attemptLogin($loginInfo){
+		$userName = $loginInfo['username'];
+		$passwordAttempt = $loginInfo['password'];
+		$query = $this->db->prepare("SELECT Username, Password FROM User WHERE Username = ?");
+		$query->bind_param("s", $userName);
+		$query->execute();
+		$query->bind_result($username,$password);
+		$query->fetch();
+		if($passwordAttempt === $password){
+			setcookie("user",$username);
+			return true;
+		}
+		else{
+			return false;
+		}
+    }
+    
+    public function logoutUser($username){
+        $this->delete("user", $username));
+    }
 
 	/**
 	 * This function creates a join table in the database for a user to follow another user.
@@ -553,6 +578,8 @@ class User
 
 }
 
+<<<<<<< HEAD
+=======
 
 
 $model = new Model();
@@ -580,4 +607,5 @@ $model->getUserPosts(1);
 
 
 
+>>>>>>> f0001cb24be17d47a42649f8f1976cc5bdfbff26
 ?>
