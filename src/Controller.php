@@ -9,10 +9,10 @@ class Index{
 		$this->indexVal = array(
 		//Format is indexVal => function/page
 			"home" => "contPage",
-			"logi" => "login",
-			"logo" => "logout",
+			"login" => "login",
+			"logout" => "logout",
 			"signup" => "signUp",
-			"feed"  => "home"
+			"feed"  => "tweets"
 		);
 	}
 	//Returns the value of the associate indexVal
@@ -61,7 +61,7 @@ class Controller{
     }
 	
 	private function contPage($params){
-        $user = $this->authCheck);
+        $user = $this->authCheck();
         if($user === true){
 			$this->redirect("feed");
 		}
@@ -71,6 +71,8 @@ class Controller{
 	}
 
 	private function signUp(){
+//			$user = "";
+//			$this->loadPage($user, "create", array());
             $signup = array(
                 'username' => $_POST['username'],
                 'email' => $_POST['email'],
@@ -92,7 +94,11 @@ class Controller{
 			'username' => $_POST['username'],
 			'password' => $_POST['password']
 		);
-		if($this->model->attemptLogin($loginInfo) === true){
+
+		if(isset($_POST['register'])){
+			$this->loadPage($user, 'create', array());
+		}
+		else if($this->model->attemptLogin($loginInfo) === true){
             $this->redirect("feed");
         }
         else{

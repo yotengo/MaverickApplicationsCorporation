@@ -80,7 +80,7 @@ Class Model{
 	public function cookieCheck($username){
         $query = $this->db->prepare("SELECT Users.* FROM Users WHERE Users.username = ?");
         $query->bind_param("s", $username);
-		$query->execute():
+		$query->execute();
 		$check = $this->db->query($query);
         if($check->num_rows > 0){
             return $check->fetch_object();
@@ -108,7 +108,7 @@ Class Model{
     }
     
     public function logoutUser($username){
-        $this->delete("user", $username));
+        $this->delete("user", $username);
     }
 
 	/**
@@ -578,11 +578,11 @@ class User
 
 }
 
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
 
-$model = new Model();
+//$model = new Model();
 
 //testing userFollowing
 //$model->followUser(1, 5);
@@ -603,9 +603,9 @@ $model = new Model();
 //$model->unFollowUser(2,5);
 
 //testing get getUserPosts
-$model->getUserPosts(1);
+//model->getUserPosts(1);
 
 
 
->>>>>>> f0001cb24be17d47a42649f8f1976cc5bdfbff26
+//>>>>>>> f0001cb24be17d47a42649f8f1976cc5bdfbff26
 ?>

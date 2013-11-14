@@ -7,14 +7,14 @@
 	</head>
 	<body>
 		<form name="login" action="/login" method="post" onsubmit="return validateForm()">
-			Username: <input type="text" name="uname"><br>
-			Password: <input type="password" name="pword"><br>
+			Username: <input type="text" name="username"><br>
+			Password: <input type="password" name="password"><br>
 			<button type="submit" onclick="formSubmit()" value="Submit form">
 			Login
 			</button>
-			<button type="button" name="register" value="Register onclick="location.href='create.php'">
+			<button type="s" name="register" value="false" onclick="return true">
 			Create an Account
-			<button>
+			</button>
 		</form> 
 		<p>
 		<a href="recover.html">Forgot password?</a>
