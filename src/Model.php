@@ -454,7 +454,8 @@ class Post
 	//this constructor gives postID
 	//can't overload constructors in php... so the postID has to be given
 	//it just won't be used when not needed(null).
-	public function Post($postID,$userID,$post,$timePosted,$numOfLikes)
+	public function Post($postID,$userID,$post,$timePosted,$numOfLikes)// use the date function for current date/time and to make it formatted nicely
+	//reference: http://php.net/manual/en/function.date.php
 	{
 		$this->postID = $postID;
 		$this->userID = $userID;
