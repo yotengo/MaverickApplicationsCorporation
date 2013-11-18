@@ -232,7 +232,7 @@ Class Model{
 			
 			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
 			
-			$query->bind_param("dssd",$userID,$thePost,$timePosted,$numOfLikes);
+			$query->bind_param("dssd",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
 			
 			$query->execute();
 				
@@ -381,7 +381,7 @@ Class Model{
 	
 	/**
 	 * This function takes in the userID and returns a list of all the posts that should show
-	 * up on their main page. This will be posts they posted, posts by users they follow, and hashtags they follow.
+	 * up on their main page. This will be posts they posted, and posts by users they follow.
 	 * The default sorting is by time.
 	 * 
 	 * @param takes in the userID of the current user.
@@ -508,6 +508,19 @@ Class Model{
 	{
 		
 	}
+	
+	/**
+	 * This function sorts the posts by date. This is done in the database since it is the default sort. Other
+	 * sorting should be done by the controller.
+	 * 
+	 * @param array $posts
+	 * @return returns a sorted array of posts
+	 * @author Ryan
+	 */
+	function sortPostsByDate($posts)
+	{
+		
+	}
 
 
 
@@ -535,7 +548,8 @@ class Hashtag
 }
 
 /**
- * This is a stub for the post class
+ * This is a stub for the post class. Notice we don't need to provide the date, it will be
+ * constructed with a dateTime object representing the current time and date in this timezone.
  * @author Ryan
  *
  */
@@ -544,23 +558,13 @@ class Post
 	private $postID;
 	private $userID;
 	private $post;
-	private $timePosted;
+	private $timePosted;	//dateTime
 	private $numOfLikes;
 
-	//this constructor doesn't give postID.
-//	public function Post($userID,$post,$timePosted,$numOfLikes)
-//	{
-//		$this->userID = $userID;
-//		$this->post = $post;
-//		$this->timePosted = $timePosted;
-//		$this->numOfLikes = $numOfLikes;
-//	}
 	
-	//this constructor gives postID
 	//can't overload constructors in php... so the postID has to be given
 	//it just won't be used when not needed(null).
 	public function Post($postID,$userID,$post,$timePosted,$numOfLikes)// use the date function for current date/time and to make it formatted nicely
-	//reference: http://php.net/manual/en/function.date.php
 	{
 		$this->postID = $postID;
 		$this->userID = $userID;
@@ -575,7 +579,7 @@ class Post
 		echo $this->postID . PHP_EOL;
 		echo $this->userID . PHP_EOL;
 		echo $this->post . PHP_EOL;
-		echo $this->timePosted . PHP_EOL;
+		echo $this->timePosted->format('Y-m-d H:i:s') . PHP_EOL;
 		echo $this->numOfLikes . PHP_EOL;
 		echo '-------------' . PHP_EOL;
 	}
@@ -687,6 +691,15 @@ class User
 
 //testing getFollowedUserPosts
 //print_r($model->getFollowedUserPosts(2));
+
+//testing use of DateTime to create a post
+//$time = new DateTime('NOW',new DateTimeZone('America/Chicago'));
+//$post = new Post(99,2,"going back to manual date insertion",$time,0);
+//
+//$model->post($post);
+
+//printing the date as a string
+//echo $time->format('Y-m-d H:i:s');
 
 
 
