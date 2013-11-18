@@ -20,7 +20,6 @@
 		<a href="recover.html">Forgot password?</a>
 		</p>
 		
-		<!--below code doesn't work-->
 		<?php
 			echo "Php is working.";
 		?>
