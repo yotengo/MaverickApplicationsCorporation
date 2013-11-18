@@ -388,10 +388,24 @@ Class Model{
 	 * @return returns a list of posts ordered by time.
 	 * @author Ryan
 	 */
-	//NOT FINISHED
-	//FINISH THE TWO HELPER METHODS FIRST
+	//TESTED
 	function getMainPagePosts($userID)
 	{
+		$myPosts = $this->getUserPosts($userID);
+		$theirPosts = $this->getFollowedUserPosts($userID);
+		$mainPageList = array();
+		
+		for($i=0;$i<count($myPosts);$i++)
+		{
+			$mainPageList[$i] = $myPosts[$i];
+		}
+		for($i=count($myPosts);$i<count($myPosts) + count($theirPosts);$i++)
+		{
+			$mainPageList[$i] = $theirPosts[$i-count($myPosts)];
+		}
+		
+		return $this->sortPostsByDate($mainPageList);
+		
 		
 	}
 	
@@ -438,7 +452,7 @@ Class Model{
 			}
 		}
 		
-		return $posts;
+		return $this->sortPostsByDate($posts);
 			
 		//close connections
 		mysqli_close($con);
@@ -446,7 +460,8 @@ Class Model{
 	}
 	
 	/**
-	 * This function returns the posts by the users that the given user is following
+	 * This function returns the posts by the users that the given user is following.
+	 * Default sorting by date.
 	 * 
 	 * @param $userID
 	 * @return returns a list of posts
@@ -471,7 +486,7 @@ Class Model{
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
 				Post.TimePosted, Post.NumOfLikes FROM Post JOIN User AS FollowedUser ON Post.UserID = 
 				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
-				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = 2;");
+				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?;");
 			
 			$query->bind_param("d",$userID);
 			
@@ -491,7 +506,7 @@ Class Model{
 			}
 		}
 		
-		return $posts;
+		return $this->sortPostsByDate($posts);
 			
 		//close connections
 		mysqli_close($con);
@@ -517,12 +532,47 @@ Class Model{
 	 * @return returns a sorted array of posts
 	 * @author Ryan
 	 */
+	//TESTED
 	function sortPostsByDate($posts)
 	{
 		
+		usort($posts, array($this, 'cmp'));
+		
+		return $posts;
 	}
 
-
+	/**
+	 * this is a callback function used to sort posts by their timePosted variable.
+	 * Basically, it's a comparator for the post class.
+	 * 
+	 * @param Two post objects
+	 * @author Ryan
+	 */
+	private function cmp($postA,$postB)
+	{
+		$dateA = date_create_from_format('Y-m-d H:i:s',$postA->getTimePosted(),new DateTimeZone('America/Chicago'));
+		$dateB = date_create_from_format('Y-m-d H:i:s',$postB->getTimePosted(),new DateTimeZone('America/Chicago'));
+			
+			
+		
+		if($dateA == $dateB)
+		{
+			return 0;
+		}
+		else if($dateA < $dateB)
+		{
+			return 1;
+		}
+		else if($dateA > $dateB)
+		{				
+			return -1;
+		}
+		else
+		{
+			echo 'Something went wrong with sorting of posts by date!';
+		}
+			
+	}
 
 }
 
@@ -666,7 +716,7 @@ class User
 //=======
 
 
-//$model = new Model();
+$model = new Model();
 
 //testing userFollowing
 //$model->followUser(1, 5);
@@ -694,12 +744,29 @@ class User
 
 //testing use of DateTime to create a post
 //$time = new DateTime('NOW',new DateTimeZone('America/Chicago'));
-//$post = new Post(99,2,"going back to manual date insertion",$time,0);
+//$post = new Post(99,1,"I am still user 1",$time,0);
 //
 //$model->post($post);
 
 //printing the date as a string
 //echo $time->format('Y-m-d H:i:s');
+
+//testing sort postsByDate
+//echo 'Before sort' . PHP_EOL;
+//print_r($model->getUserPosts(1));
+//
+//
+//$posts = $model->getUserPosts(1);
+//
+//echo 'After sort' . PHP_EOL;
+////the sorted version of the array is the one
+////returned from the method
+//print_r($model->sortPostsByDate($posts));
+
+//testing getMainPagePosts()
+//print_r($model->getMainPagePosts(2));
+
+
 
 
 
