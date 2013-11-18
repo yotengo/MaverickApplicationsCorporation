@@ -20,8 +20,8 @@
 Class Model{
 	
 	function __construct(){
-//      $this->db = new mysqli('cse.unl.edu', 'rcarlso', 'a@9VUi', 'rcarlso');
-		$this->db = new mysqli('localhost', 'root', 'stephen', 'twatter');
+      $this->db = new mysqli('cse.unl.edu', 'rcarlso', 'a@9VUi', 'rcarlso');
+//		$this->db = new mysqli('localhost', 'root', 'stephen', 'twatter');
 		//Checks that connection was successful
 		if (mysqli_connect_errno($this->db))
 		{
@@ -71,40 +71,51 @@ Class Model{
 			$email = $user['email'];
 			$firstName = $user['firstname'];
 			$lastName = $user['lastname'];			
-			$query = $this->db->prepare("INSERT INTO User(Username,Password,Email,FirstName,LastName) VALUES (?,?,?,?,?)");			
+			$query = $conn->prepare("INSERT INTO User(Username,Password,Email,FirstName,LastName) VALUES (?,?,?,?,?)");			
 			//the string "sssss" indicates 5 strings for the database, since their type in php is not explicit.
 			$query->bind_param("sssss",$userName,$password,$email,$firstName,$lastName);			
 			$query->execute();
+			$query->close();
+			$conn->close();
 			return true;	
 	}
 	public function cookieCheck($username){
-        $query = $this->db->prepare("SELECT Users.* FROM Users WHERE Users.username = ?");
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+        $query = $con->prepare($con,"SELECT Users.* FROM Users WHERE Users.username = ?");
         $query->bind_param("s", $username);
 		$query->execute();
-		$check = $this->db->query($query);
+		$check = $conn->query($query);
         if($check->num_rows > 0){
             return $check->fetch_object();
         }
         else{
             return false;
         }
+		$query->close();
+		$conn->close();
     }
 	
     public function attemptLogin($loginInfo){
 		$userName = $loginInfo['username'];
 		$passwordAttempt = $loginInfo['password'];
-		$query = $this->db->prepare("SELECT Username, Password FROM User WHERE Username = ?");
+		$query = $conn->prepare("SELECT Username, Password FROM User WHERE Username = ?");
 		$query->bind_param("s", $userName);
 		$query->execute();
 		$query->bind_result($username,$password);
 		$query->fetch();
 		if($passwordAttempt === $password){
-			setcookie("user",$username);
+			setcookie("user",$username,);
 			return true;
 		}
 		else{
 			return false;
 		}
+		$query->close();
+		$conn->close();
     }
     
     public function logoutUser($username){
