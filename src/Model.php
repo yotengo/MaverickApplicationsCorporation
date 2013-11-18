@@ -1,6 +1,7 @@
 <?php
 /**
  * Ryan Carlson
+ * Stephen Pandorf
  * Model.php
  * 11/7/13
  */
@@ -19,15 +20,6 @@
  */
 Class Model{
 	
-	function __construct(){
-      $this->db = new mysqli('cse.unl.edu', 'rcarlso', 'a@9VUi', 'rcarlso');
-//		$this->db = new mysqli('localhost', 'root', 'stephen', 'twatter');
-		//Checks that connection was successful
-		if (mysqli_connect_errno($this->db))
-		{
-			echo "Failed to connect to MySQL: " . mysqli_connect_error();
-		}
-    }
 	function test()
 	{
 		// Create connection
@@ -54,6 +46,7 @@ Class Model{
 			
 		//close connection
 		mysqli_close($con);
+		
 
 	}
 
@@ -62,10 +55,16 @@ Class Model{
 	 *
 	 * @param takes in a user object and creates a new entry in the user table.
 	 * @return nothing to return
+	 * @author Ryan, Stephen
 	 */
-	//TESTED
+	//NEEDS TESTING
 	function registerUser($user)
 	{
+		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
 			$userName = $user['username'];
 			$password = $user['password'];
 			$email = $user['email'];
@@ -79,6 +78,12 @@ Class Model{
 			$conn->close();
 			return true;	
 	}
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param unknown_type $username
+	 * @author Stephen
+	 */
 	public function cookieCheck($username){
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($con))
@@ -99,6 +104,12 @@ Class Model{
 		$conn->close();
     }
 	
+    /**
+     * 
+     * Enter description here ...
+     * @param $loginInfo
+     * @author Stephen
+     */
     public function attemptLogin($loginInfo){
 		$userName = $loginInfo['username'];
 		$passwordAttempt = $loginInfo['password'];
@@ -108,7 +119,7 @@ Class Model{
 		$query->bind_result($username,$password);
 		$query->fetch();
 		if($passwordAttempt === $password){
-			setcookie("user",$username,);
+			setcookie("user",$username);
 			return true;
 		}
 		else{
@@ -118,6 +129,12 @@ Class Model{
 		$conn->close();
     }
     
+    /**
+     * 
+     * Enter description here ...
+     * @param $username
+     * @author Stephen
+     */
     public function logoutUser($username){
         $this->delete("user", $username);
     }
@@ -127,6 +144,7 @@ Class Model{
 	 * 
 	 * @param this functions takes the user ids of the users to follow the other. In this case, userA is to follow userB.
 	 * @return nothing to return
+	 * @author Ryan
 	 */
 	
 	//TESTED
@@ -160,6 +178,7 @@ Class Model{
 	 * the user to follow the indicated hashtag
 	 * 
 	 * @param takes a userID and hashtagID
+	 * @author Ryan
 	 */
 	//NEEDS TESTING
 	function followHashtag($userID,$hashtagID)
@@ -191,6 +210,7 @@ Class Model{
 	 * This function will create an entry in the post table.
 	 * 
 	 * @param takes a post object.
+	 * @author Ryan
 	 */
 	//TESTED
 	function post($post)
@@ -228,6 +248,7 @@ Class Model{
 	 *
 	 * @param takes in a hashtag object in the database
 	 * @return nothing to return
+	 * @author Ryan
 	 */
 	
 	//TESTED
@@ -262,6 +283,7 @@ Class Model{
 	 *
 	 * @param takes in post's and hashtag's IDs
 	 * @return nothing to return
+	 * @author Ryan
 	 */
 	//NEEDS TESTING
 	function postHashtag($postID,$hashtagID)
@@ -294,6 +316,7 @@ Class Model{
 	 * @param takes in two User IDs and deletes the entry associating them from
 	 * the databse.
 	 * @return nothing to return
+	 * @author Ryan
 	 */
 	//TESTED
 	function unFollowUser($userIDA,$userIDB)
@@ -328,6 +351,7 @@ Class Model{
 	 *
 	 * @param Takes in the ID of the post and updates the likeCount.
 	 * @return nothing to return
+	 * @author Ryan
 	 */
 	//NEEDS TESTING
 	function likePost($postID)
@@ -362,9 +386,10 @@ Class Model{
 	 * 
 	 * @param takes in the userID of the current user.
 	 * @return returns a list of posts ordered by time.
+	 * @author Ryan
 	 */
 	//NOT FINISHED
-	//FINISH THE THREE HELPER METHODS FIRST
+	//FINISH THE TWO HELPER METHODS FIRST
 	function getMainPagePosts($userID)
 	{
 		
@@ -374,11 +399,14 @@ Class Model{
 	 * This function returns the posts by the indicated user
 	 * 
 	 * @param $userID
-	 * @return returns a list of posts by the given user
+	 * @return returns an array of posts by the given user
+	 * @author Ryan
 	 */
-	//NOT FINISHED
+	//TESTED
 	function getUserPosts($userID)
 	{
+		$i=0;
+		$posts = array();
 		// Create connection
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
@@ -403,18 +431,18 @@ Class Model{
 				
 				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
 				
-				//testing
-				$post->printPost();
-				
-				//NOW WE NEED A LIST FOR OUR NEW POST OBJECTS, THEN RETURN IT.
+				$posts[$i] = $post;
 				
 				
-
+				$i++;
 			}
 		}
+		
+		return $posts;
 			
-		//close connection
+		//close connections
 		mysqli_close($con);
+		mysqli_close($query);
 	}
 	
 	/**
@@ -422,11 +450,52 @@ Class Model{
 	 * 
 	 * @param $userID
 	 * @return returns a list of posts
+	 * @author Ryan
 	 */
-	//NOT FINISHED
+	//TESTED
 	function getFollowedUserPosts($userID)
 	{
+		$i=0;
+		$posts = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
+				Post.TimePosted, Post.NumOfLikes FROM Post JOIN User AS FollowedUser ON Post.UserID = 
+				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
+				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = 2;");
+			
+			$query->bind_param("d",$userID);
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
+				
+				$posts[$i] = $post;
+				
+				
+				$i++;
+			}
+		}
 		
+		return $posts;
+			
+		//close connections
+		mysqli_close($con);
+		mysqli_close($query);
 	}
 	/**
 	 * This function returns a list of posts that have hashtags that the given user is following.
@@ -614,7 +683,10 @@ class User
 //$model->unFollowUser(2,5);
 
 //testing get getUserPosts
-//model->getUserPosts(1);
+//print_r($model->getUserPosts(1));
+
+//testing getFollowedUserPosts
+//print_r($model->getFollowedUserPosts(2));
 
 
 
