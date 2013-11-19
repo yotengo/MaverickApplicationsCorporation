@@ -452,11 +452,12 @@ Class Model{
 			}
 		}
 		
-		return $this->sortPostsByDate($posts);
 			
 		//close connections
 		mysqli_close($con);
-		mysqli_close($query);
+		
+		return $this->sortPostsByDate($posts);
+		
 	}
 	
 	/**
@@ -506,11 +507,12 @@ Class Model{
 			}
 		}
 		
-		return $this->sortPostsByDate($posts);
 			
 		//close connections
 		mysqli_close($con);
-		mysqli_close($query);
+		
+		return $this->sortPostsByDate($posts);
+		
 	}
 	/**
 	 * This function returns a list of posts that have hashtags that the given user is following.
@@ -573,6 +575,148 @@ Class Model{
 		}
 			
 	}
+	
+	/**
+	 * This function checks if the given hashtag exists in the database.
+	 * 
+	 * @param String $hashtag
+	 * @return returns 1 if exists, 0 otherwise
+	 * @author Ryan
+	 */
+	//TESTED
+	function checkIfHashtagExists($hashtag)
+	{
+		$exists = 0;
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM Hashtag");
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				if(strcmp($hashtag,$row['Hashtag']) == 0)
+				{
+					$exists = 1;
+				}
+			}
+		}
+		
+		
+			
+		//close connections
+		mysqli_close($con);
+		return $exists;
+	}
+	
+	/**
+	 * This function returns a list of all the users in the system.
+	 * 
+	 * @param nothing
+	 * @return returns a list of user objects
+	 * @author Ryan
+	 */
+	//TESTED
+	function getListOfAllUsers()
+	{
+		$i=0;
+		$users = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM User");
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
+				
+				$users[$i] = $user;
+				
+				
+				$i++;
+			}
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $users;
+	}
+	
+	/**
+	 * This function returns a list of all the hashtags in the system.
+	 * 
+	 * @param nothing
+	 * @return list of hashtag objects
+	 * @author Ryan
+	 */
+	//TESTED
+	function getListOfAllHashtags()
+	{
+		$i=0;
+		$hashtags = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM Hashtag");
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$hashtag = new Hashtag($row['HashtagID'],$row['Hashtag']);
+				
+				$hashtags[$i] = $hashtag;
+				
+				
+				$i++;
+			}
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $hashtags;
+	}
+	
+	
 
 }
 
@@ -584,10 +728,12 @@ Class Model{
  */
 class Hashtag
 {
+	private $hashtagID;
 	private $hashtag;
 	
-	public function Hashtag($hashtag)
+	public function Hashtag($hashtagID,$hashtag)
 	{
+		$this->hashtagID = $hashtagID;
 		$this->hashtag = $hashtag;
 	}
 	
@@ -671,8 +817,9 @@ class User
 	private $firstName;
 	private $lastName;
 
-	public function User($userName,$password,$email,$firstName,$lastName)
+	public function User($userID,$userName,$password,$email,$firstName,$lastName)
 	{
+		$this->userID = $userID;
 		$this->userName = $userName;
 		$this->password = $password;
 		$this->email = $email;
@@ -765,6 +912,17 @@ $model = new Model();
 
 //testing getMainPagePosts()
 //print_r($model->getMainPagePosts(2));
+
+//testing checkIfHashtagExists
+//echo $model->checkIfHashtagExists('waffles');
+
+//testing getListOfAllUsers
+//print_r($model->getListOfAllUsers());
+
+//testing getListOfAllHashtags
+//print_r($model->getListOfAllHashtags());
+
+
 
 
 
