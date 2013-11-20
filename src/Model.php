@@ -520,10 +520,51 @@ Class Model{
 	 * @param $userID
 	 * @return returns a list of posts
 	 */
-	//NOT FINISHED
+	//TESTED
 	function getFollowedHashtagPosts($userID)
 	{
+		$i=0;
+		$posts = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
+				Post.TimePosted, Post.NumOfLikes FROM Post JOIN PostHashtags ON Post.PostID = 
+				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
+				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
+				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");
+			
+			$query->bind_param("d",$userID);
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
+				
+				$posts[$i] = $post;
+				
+				
+				$i++;
+			}
+		}
 		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $this->sortPostsByDate($posts);
 	}
 	
 	/**
@@ -535,7 +576,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function sortPostsByDate($posts)
+	private function sortPostsByDate($posts)
 	{
 		
 		usort($posts, array($this, 'cmp'));
@@ -921,6 +962,9 @@ $model = new Model();
 
 //testing getListOfAllHashtags
 //print_r($model->getListOfAllHashtags());
+
+//testing getFollowedHashtagPosts
+//print_r($model->getFollowedHashtagPosts(1));
 
 
 
