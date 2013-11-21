@@ -12,7 +12,8 @@ class Index{
                 "login" => "login",
                 "logout" => "logout",
                 "signup" => "signUp",
-                "feed" => "tweets"
+                "feed" => "feed",
+				"post" => "submitPost"
                 );
         }
         //Returns the value of the associate indexVal
@@ -60,7 +61,7 @@ class Controller{
 			header("Location: /" . $url);
 		}
         
-        private function contPage($params){
+        private function contPage(){
 			$user = $this->authCheck();
 			if($user === true){
                 $this->redirect("feed");
@@ -80,10 +81,10 @@ class Controller{
             );
             $register = $this->model->registerUser($signup);
             if($register === true){
-                $this->redirect("feed");
+                $this->redirect("home");
             }
             else{
-                $this->redirect("login");
+                $this->redirect("home");
             }
 		}
     
@@ -93,46 +94,53 @@ class Controller{
                 'password' => $_POST['password']
             );
             if(isset($_POST['register'])){
+				$user="";
                 $this->loadPage($user, 'create', array());
             }
             else if($this->model->attemptLogin($loginInfo) === true){
 				$this->redirect("feed");
 			}
 			else{
-				$this->redirect("login");
+				$this->redirect("home");
 			}
         }
         
         private function logout(){
 			$this->model->logoutUser($_COOKIE['user']);
-			$this->redirect("login");
+			$this->redirect("home");
 		}
 	
-		private function submitPost($params){
+		private function submitPost(){
 			$user = $this->authCheck();
 			if($user === false){
-				$this->redirect("login");
+				$this->redirect("home");
 			}
 			else{
 				$postText = $_POST['text'];
-				if(strlen($post) > 140){
-					$this->redirect("feedpage");
+				$userID = $user->UserID;
+				$timePosted = new DateTime('NOW',new DateTimeZone('America/Chicago'));				
+				$post = new Post(0,$userID,$postText,$timePosted,0);
+				if(strlen($postText) > 140){
+					$this->redirect("feed");
+					//Need to add an error message here
 				}
 				else{
-					$this->model->post($user, $postText);
-					$this->redirect("feedpage");
+					$this->model->post($post);
+					$this->redirect("feed");
 				}
 			}
         
 		}
 	
-		private function feed($params){
+		private function feed(){
 			$user = $this->authCheck();
 			if($user === false){
-				$this->redirect("login");
+				$this->redirect("home");
 			}
 			else{
 //          	$postFeed = $this->model->getMainPaigePosts($user->getID());           
-				$this->loadPage($user, "feedpage", array('User' => $user, "messages" => $postFeed));
+//				$this->loadPage($user, "feedpage", array('User' => $user, "messages" => $postFeed));
+				$this->loadPage($user, "feedpage", array('User' => $user));
 			}
-		}	
+		}
+}		

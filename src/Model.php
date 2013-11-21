@@ -61,10 +61,10 @@ Class Model{
 	function registerUser($user)
 	{
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-		if (mysqli_connect_errno($conn))
-		{
+		if (mysqli_connect_errno($conn)){
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
+		else{
 			$userName = $user['username'];
 			$password = $user['password'];
 			$email = $user['email'];
@@ -75,8 +75,9 @@ Class Model{
 			$query->bind_param("sssss",$userName,$password,$email,$firstName,$lastName);			
 			$query->execute();
 			$query->close();
-			$conn->close();
 			return true;	
+		}
+		$conn->close();
 	}
 	/**
 	 * 
@@ -85,24 +86,25 @@ Class Model{
 	 * @author Stephen
 	 */
 	public function cookieCheck($username){
+		$userCheck = $username;
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-		if (mysqli_connect_errno($con))
-		{
-			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        if (mysqli_connect_errno($con)){
+            echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        }
+		else{
+			$query = $con->prepare("SELECT User.* FROM User WHERE User.username = ?");
+			$query->bind_param("s", $userCheck);
+			$query->execute();
+			$check = $query->get_result();
+			if($check->num_rows > 0){
+				return $check->fetch_object();
+			}
+			else{
+				return false;			
+			}
 		}
-        $query = $con->prepare($con,"SELECT Users.* FROM Users WHERE Users.username = ?");
-        $query->bind_param("s", $username);
-		$query->execute();
-		$check = $conn->query($query);
-        if($check->num_rows > 0){
-            return $check->fetch_object();
-        }
-        else{
-            return false;
-        }
-		$query->close();
-		$conn->close();
-    }
+        mysqli_close($con);
+	}
 	
     /**
      * 
@@ -111,22 +113,28 @@ Class Model{
      * @author Stephen
      */
     public function attemptLogin($loginInfo){
-		$userName = $loginInfo['username'];
-		$passwordAttempt = $loginInfo['password'];
-		$query = $conn->prepare("SELECT Username, Password FROM User WHERE Username = ?");
-		$query->bind_param("s", $userName);
-		$query->execute();
-		$query->bind_result($username,$password);
-		$query->fetch();
-		if($passwordAttempt === $password){
-			setcookie("user",$username);
-			return true;
+        $con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+        // Check connection
+        if (mysqli_connect_errno($con)){
+            echo "Failed to connect to MySQL: " . mysqli_connect_error();
+        }
+        else{	
+            $userName = $loginInfo['username'];
+            $passwordAttempt = $loginInfo['password'];
+            $query = $con->prepare("SELECT Username, Password FROM User WHERE Username = ?");
+            $query->bind_param("s", $userName);
+            $query->execute();
+            $query->bind_result($username,$password);
+            $query->fetch();
+            if($passwordAttempt === $password){
+                setcookie("user",$username,time()+3600);
+                return true;
+            }
+            else{
+                return false;
+            }
 		}
-		else{
-			return false;
-		}
-		$query->close();
-		$conn->close();
+        mysqli_close($con);
     }
     
     /**
@@ -213,31 +221,22 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function post($post)
-	{
+	function post($post){
 		// Create connection
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-
 		// Check connection
-		if (mysqli_connect_errno($con))
-		{
+		if (mysqli_connect_errno($con)){
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		else
-		{
+		else{
 			$userID = $post->getUserID();
 			$thePost = $post->getPost();
 			$timePosted = $post->getTimePosted();
-			$numOfLikes = $post->getNumOfLikes();
-			
-			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
-			
-			$query->bind_param("dssd",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
-			
-			$query->execute();
-				
-		}
-			
+			$numOfLikes = $post->getNumOfLikes();			
+			$query = $con->prepare("INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");			
+			$query->bind_param("dssd",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);			
+			$query->execute();				
+		}			
 		//close connection
 		mysqli_close($con);
 	}
