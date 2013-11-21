@@ -44,8 +44,8 @@
 			
 		}
 		
-		
-		$dispage="login.php";
+		$dispage="search.php";
+		//$dispage="login.php";
 		
 		displayHeader($dispage);
 		
