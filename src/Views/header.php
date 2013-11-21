@@ -1,4 +1,7 @@
 <?php
+require("../Controller.php");
+require("../Model.php");
+
 echo "<html>";
 
 echo "<body bgcolor=\"aqua\">";
