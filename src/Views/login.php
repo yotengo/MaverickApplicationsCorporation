@@ -21,7 +21,7 @@
 		</p>
 		
 		<?php
-			echo "Php is working.";
+	//		echo "Php is working.";
 		?>
 		
 	</body>
