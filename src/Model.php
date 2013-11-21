@@ -61,10 +61,10 @@ Class Model{
 	function registerUser($user)
 	{
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-		if (mysqli_connect_errno($conn)){
+		if (mysqli_connect_errno($conn))
+		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		else{
 			$userName = $user['username'];
 			$password = $user['password'];
 			$email = $user['email'];
@@ -75,9 +75,8 @@ Class Model{
 			$query->bind_param("sssss",$userName,$password,$email,$firstName,$lastName);			
 			$query->execute();
 			$query->close();
+			$conn->close();
 			return true;	
-		}
-		$conn->close();
 	}
 	/**
 	 * 
@@ -86,25 +85,24 @@ Class Model{
 	 * @author Stephen
 	 */
 	public function cookieCheck($username){
-		$userCheck = $username;
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-        if (mysqli_connect_errno($con)){
-            echo "Failed to connect to MySQL: " . mysqli_connect_error();
-        }
-		else{
-			$query = $con->prepare("SELECT User.* FROM User WHERE User.username = ?");
-			$query->bind_param("s", $userCheck);
-			$query->execute();
-			$check = $query->get_result();
-			if($check->num_rows > 0){
-				return $check->fetch_object();
-			}
-			else{
-				return false;			
-			}
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-        mysqli_close($con);
-	}
+        $query = $con->prepare($con,"SELECT Users.* FROM Users WHERE Users.username = ?");
+        $query->bind_param("s", $username);
+		$query->execute();
+		$check = $conn->query($query);
+        if($check->num_rows > 0){
+            return $check->fetch_object();
+        }
+        else{
+            return false;
+        }
+		$query->close();
+		$conn->close();
+    }
 	
     /**
      * 
@@ -113,28 +111,22 @@ Class Model{
      * @author Stephen
      */
     public function attemptLogin($loginInfo){
-        $con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
-        // Check connection
-        if (mysqli_connect_errno($con)){
-            echo "Failed to connect to MySQL: " . mysqli_connect_error();
-        }
-        else{	
-            $userName = $loginInfo['username'];
-            $passwordAttempt = $loginInfo['password'];
-            $query = $con->prepare("SELECT Username, Password FROM User WHERE Username = ?");
-            $query->bind_param("s", $userName);
-            $query->execute();
-            $query->bind_result($username,$password);
-            $query->fetch();
-            if($passwordAttempt === $password){
-                setcookie("user",$username,time()+3600);
-                return true;
-            }
-            else{
-                return false;
-            }
+		$userName = $loginInfo['username'];
+		$passwordAttempt = $loginInfo['password'];
+		$query = $conn->prepare("SELECT Username, Password FROM User WHERE Username = ?");
+		$query->bind_param("s", $userName);
+		$query->execute();
+		$query->bind_result($username,$password);
+		$query->fetch();
+		if($passwordAttempt === $password){
+			setcookie("user",$username);
+			return true;
 		}
-        mysqli_close($con);
+		else{
+			return false;
+		}
+		$query->close();
+		$conn->close();
     }
     
     /**
@@ -180,6 +172,49 @@ Class Model{
 		//close connection
 		mysqli_close($con);
 	}
+	
+	/**
+	 * This function will indicate whether userA is following userB
+	 * @param takes in two user ids
+	 * @return returns 1 if userA is following userB, 0 otherwise
+	 * @author Ryan
+	 */
+	//TESTED
+	function checkIfFollowing($userIDA,$userIDB)
+	{
+		$exists = 0;
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM UserFollowing");
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				if($userIDA == $row['UserID'] && $userIDB == $row['FollowingUserID'])
+				{
+					$exists = 1;
+				}
+			}
+		}
+		
+		
+			
+		//close connections
+		mysqli_close($con);
+		return $exists;
+	}
 
 	/**
 	 * This method creates an entry in the hashtag following table to allow
@@ -221,22 +256,31 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function post($post){
+	function post($post)
+	{
 		// Create connection
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
 		// Check connection
-		if (mysqli_connect_errno($con)){
+		if (mysqli_connect_errno($con))
+		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		else{
+		else
+		{
 			$userID = $post->getUserID();
 			$thePost = $post->getPost();
 			$timePosted = $post->getTimePosted();
-			$numOfLikes = $post->getNumOfLikes();			
-			$query = $con->prepare("INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");			
-			$query->bind_param("dssd",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);			
-			$query->execute();				
-		}			
+			$numOfLikes = $post->getNumOfLikes();
+			
+			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
+			
+			$query->bind_param("dssd",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
+			
+			$query->execute();
+				
+		}
+			
 		//close connection
 		mysqli_close($con);
 	}
@@ -964,6 +1008,9 @@ $model = new Model();
 
 //testing getFollowedHashtagPosts
 //print_r($model->getFollowedHashtagPosts(1));
+
+//testing checkIfFollowing
+echo $model->checkIfFollowing(2,5);
 
 
 
