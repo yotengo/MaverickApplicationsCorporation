@@ -180,7 +180,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function checkIfFollowing($userIDA,$userIDB)
+	function checkIfFollowingUser($userIDA,$userIDB)
 	{
 		$exists = 0;
 		// Create connection
@@ -203,6 +203,49 @@ Class Model{
 			while($row = mysqli_fetch_array($result))
 			{
 				if($userIDA == $row['UserID'] && $userIDB == $row['FollowingUserID'])
+				{
+					$exists = 1;
+				}
+			}
+		}
+		
+		
+			
+		//close connections
+		mysqli_close($con);
+		return $exists;
+	}
+	
+	/**
+	 * This function will indicate whether the user is following a given hashtag
+	 * @param takes in a userID and hashtagID
+	 * @return returns 1 if user is following hashtag, 0 otherwise
+	 * @author Ryan
+	 */
+	//TESTED
+	function checkIfFollowingHashtag($userID,$hashtagID)
+	{
+		$exists = 0;
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT * FROM HashtagFollowing");
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				if($userID == $row['UserID'] && $hashtagID == $row['HashtagID'])
 				{
 					$exists = 1;
 				}
@@ -800,8 +843,145 @@ Class Model{
 		return $hashtags;
 	}
 	
-	
+	/**
+	 * This function can be used for searching by username, it returns a list of
+	 * posts by the user with the indicated username
+	 * 
+	 * @param takes in a (String) username
+	 * @return returns a list of post objects
+	 * @author Ryan
+	 */
+	//TESTED
+	function getPostsByUsername($username)
+	{
+		$i=0;
+		$posts = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
+				Post.TimePosted, Post.NumOfLikes FROM Post JOIN User ON Post.UserID = 
+				User.UserID WHERE User.UserName = ?");
+			
+			$query->bind_param("s",$username);
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
+				
+				$posts[$i] = $post;
+				
+				
+				$i++;
+			}
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $this->sortPostsByDate($posts);
+	}
+	
+	/**
+	 * This function can be used for searching by hashtag and generally 
+	 * displaying all posts that have a certain hashtag, it returns a list of
+	 * posts that have the indicated hashtag
+	 * 
+	 * @param takes in a (String) hashtag
+	 * @return returns a list of post objects
+	 * @author Ryan
+	 */
+	//TESTED
+	function getPostsByHashtag($hashtag)
+	{
+		$i=0;
+		$posts = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, Post.TimePosted, 
+				Post.NumOfLikes FROM Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
+				Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID WHERE Hashtag = ?");
+			
+			$query->bind_param("s",$hashtag);
+			
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
+				
+				$posts[$i] = $post;
+				
+				
+				$i++;
+			}
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $this->sortPostsByDate($posts);
+	}
+	
+	/**
+	 * This function updates the entry in User with the new password.
+	 * 
+	 * @param takes in userID and (String) newPassword
+	 * @return nothing to return
+	 * @author Ryan
+	 */
+	//TESTED
+	function changePassword($userID,$newPassword)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{			
+			$query = mysqli_prepare($con,"UPDATE User SET Password = ? WHERE UserID = ?");
+			
+			$query->bind_param("sd",$newPassword,$userID);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
+	
 }
 
 /**
@@ -1009,8 +1189,23 @@ $model = new Model();
 //testing getFollowedHashtagPosts
 //print_r($model->getFollowedHashtagPosts(1));
 
-//testing checkIfFollowing
-echo $model->checkIfFollowing(2,5);
+//testing checkIfFollowingUser
+//echo $model->checkIfFollowingUser(2,5);
+
+//testing checkIfFollowingHashtag
+//echo $model->checkIfFollowingHashtag(1,1);
+
+//testing getPostsByUsername
+//print_r($model->getPostsByUsername("newUser"));
+
+//testing getPostsByHashtag
+//print_r($model->getPostsByHashtag("freebird"));
+
+//testing changePassword
+//$model->changePassword(1,"poop");
+
+
+
 
 
 
