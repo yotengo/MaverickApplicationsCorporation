@@ -1,6 +1,6 @@
 <?php
 require("../Controller.php");
-require("../Model.php");
+//require("../Model.php");
 
 echo "<html>";
 

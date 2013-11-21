@@ -1,28 +1,50 @@
+<?php
 
-<!--this will be the first page on the site that users will see-->
-	<head>
-		<title>
-		Login
-		</title>
-	</head>
-	<body>
-		<form name="login" action="/login" method="post" onsubmit="return validateForm()">
-			Username: <input type="text" name="username"><br>
-			Password: <input type="password" name="password"><br>
-			<button type="submit" onclick="formSubmit()" value="Submit form">
-			Login
-			</button>
-			<button type="s" name="register" value="false" onclick="return true">
-			Create an Account
-			</button>
-		</form> 
-		<p>
-		<a href="recover.html">Forgot password?</a>
-		</p>
+//require("../Model.php");
+require("../Controller.php");
+//require ("../View.php");
+//resource: http://stackoverflow.com/questions/5968280/how-to-run-a-php-function-from-an-html-form
+//<!--this will be the first page on the site that users will see-->
+	//if(isset($_POST['register']){
 		
-		<?php
+	//}
+
+
+	echo "<html>".PHP_EOL;
+	echo "<head>".PHP_EOL;
+	echo "	<title>".PHP_EOL;
+	echo "	Login".PHP_EOL;
+	echo "	</title>";//add eols on down
+	echo "</head>";
+	echo "<body>";
+	echo "	<form name=\"login\" action=\"";
+	
+//	$control = new Controller();
+//	$control -> login();
+	
+	echo "\" method=\"post\" onsubmit=\"return true\">";
+	echo "		Username: <input type=\"text\" name=\"username\"><br>";
+	echo "		Password: <input type=\"password\" name=\"password\"><br>";
+	echo "		<button type=\"submit\" onclick=\"formSubmit()\" value=\"Submit form\">";
+	echo "		Login";
+	echo "		</button>";
+	echo "		<button type=\"s\" name=\"register\" value=\"false\" onclick=\"return true\">";
+	echo "		Create an Account";
+	echo "		</button>";
+
+	echo "	<p>";
+	echo "		<button type=\"s\" name=\"forgotpw\" value=\"false\" onclick=\"return true\">";
+	//<!--//on click end-->
+			
+	echo "		Forgot Password?";
+	echo "		</button>";
+	echo "	</p>";
+			echo "	</form> ";
+		
 	//		echo "Php is working.";
-		?>
 		
-	</body>
-</html>
+		
+	echo "</body>";
+echo "</html>";
+
+?>
