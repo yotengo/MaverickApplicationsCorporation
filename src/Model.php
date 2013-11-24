@@ -982,6 +982,102 @@ Class Model{
 		mysqli_close($con);
 	}
 	
+	/**
+	 * This function returns a list of users that match $username on either
+	 * their username or first or last name.
+	 * 
+	 * FOR DEBUGGING: make sure any leading or trailing spaces are trimmed from 
+	 * the string before passing it into this method!
+	 * 
+	 * @param takes in a (String) representing either the username or first last name of the user
+	 * @return returns a list of user objects that match the search criteria
+	 * @author Ryan
+	 */
+	function searchForUser($username)
+	{
+		$i=0;
+		$users = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			//if searching with two words (by full name)
+			if (preg_match ('/[ ]/', $username)) {
+			
+				$name = explode(" ",$username);
+				$firstName = $name[0];
+				$lastName = $name[1];
+				
+				$firstName = '%' . $firstName . '%';
+				$lastName = '%' . $lastName . '%';
+				
+			
+			
+			
+				$query = mysqli_prepare($con,"SELECT * FROM User WHERE FirstName LIKE ? AND LastName LIKE ?");
+			
+				$query->bind_param("ss",$firstName,$lastName);
+			
+				$query->execute();
+			
+				$result = $query->get_result();
+							
+				while($row = mysqli_fetch_array($result))
+				{
+				
+					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
+				
+					$users[$i] = $user;
+				
+				
+					$i++;
+				}
+			
+			
+			}
+			//if searching with one word (by username, firstname, or lastname)
+			else
+			{
+				//changing the string like this will allow it to match on partial entry
+				$username = '%' . $username . '%';
+				$query = mysqli_prepare($con,"SELECT * FROM User WHERE FirstName LIKE ? 
+					OR LastName LIKE ? OR Username LIKE ?");
+			
+				$query->bind_param("sss",$username,$username,$username);
+			
+				$query->execute();
+			
+				$result = $query->get_result();
+							
+				while($row = mysqli_fetch_array($result))
+				{
+				
+					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
+					
+					$users[$i] = $user;
+				
+				
+					$i++;
+				}
+			}
+		
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $users;
+		
+	}
+	
 }
 
 /**
@@ -1203,6 +1299,9 @@ $model = new Model();
 
 //testing changePassword
 //$model->changePassword(1,"poop");
+
+//testing searchForUser
+print_r($model->searchForUser('bo'));
 
 
 
