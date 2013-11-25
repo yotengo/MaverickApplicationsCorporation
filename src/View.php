@@ -5,11 +5,11 @@
  */
  
 // require("Model.php");
- require("Controller.php");
+// require("Controller.php");
 
  
  //make this into class
- //Class View{
+ Class View{
 		/* 
 		*	A function that given a list/array of posts, 
 		*	will display them chronologically with newest at the top
@@ -29,8 +29,8 @@
 		function displayHeader($page){
 			echo PHP_EOL."<html>".PHP_EOL;
 			echo PHP_EOL."<frameset rows=\"50,100%\">".PHP_EOL;
-			echo "<frame src=\"Views/header.php\">".PHP_EOL;
-			echo "<frame src=\"Views/".$page."\">".PHP_EOL;
+			echo "<frame src=\"header.php\">".PHP_EOL;
+			echo "<frame src=\"".$page."\">".PHP_EOL;
 			echo "</frameset>".PHP_EOL;
 			echo "</html>".PHP_EOL;	
 		}
@@ -52,7 +52,7 @@
 			
 		}
 		
-		//}
+}
 		
 		//$view = new View();
 		
@@ -61,7 +61,7 @@
 		
 		//displayHeader($dispage);
 		
-		displayLogin();
+		//displayLogin();
 		
 		//echo "This works.";
 		

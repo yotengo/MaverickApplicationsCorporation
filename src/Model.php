@@ -86,12 +86,16 @@ Class Model{
 	 */
 	public function cookieCheck($username){
 		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		// $con=new mysqli("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($con))
 		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-        $query = $con->prepare($con,"SELECT Users.* FROM Users WHERE Users.username = ?");
-        $query->bind_param("s", $username);
+        $query = $con->prepare(/*$con,*/"SELECT Users.* FROM Users WHERE Users.username = ?");
+        if($query===false){
+			return false;
+		}
+		$query->bind_param("s", $username);
 		$query->execute();
 		$check = $conn->query($query);
         if($check->num_rows > 0){
@@ -111,6 +115,11 @@ Class Model{
      * @author Stephen
      */
     public function attemptLogin($loginInfo){
+		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
 		$userName = $loginInfo['username'];
 		$passwordAttempt = $loginInfo['password'];
 		$query = $conn->prepare("SELECT Username, Password FROM User WHERE Username = ?");
@@ -136,7 +145,13 @@ Class Model{
      * @author Stephen
      */
     public function logoutUser($username){
-        $this->delete("user", $username);
+	
+	// don't know if below works...
+	 unset($_COOKIE['user']);
+	
+	
+	//what is delete?
+         // $this->delete("user", $username);
     }
 
 	/**
@@ -161,7 +176,7 @@ Class Model{
 		else
 		{
 			
-			$query = mysqli_prepare($con,"INSERT INTO UserFollowing(UserID,FollowingUserID) VALUES (?,?)");
+			$query = mysqli_prepare(/*$con,*/"INSERT INTO UserFollowing(UserID,FollowingUserID) VALUES (?,?)");
 			
 			$query->bind_param("dd",$userIDA,$userIDB);
 			
@@ -1297,11 +1312,8 @@ $model = new Model();
 //testing getPostsByHashtag
 //print_r($model->getPostsByHashtag("freebird"));
 
-//testing changePassword
-//$model->changePassword(1,"poop");
-
 //testing searchForUser
-print_r($model->searchForUser('bo'));
+//print_r($model->searchForUser('bo'));
 
 
 

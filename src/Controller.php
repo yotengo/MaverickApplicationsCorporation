@@ -31,9 +31,9 @@ class Controller{
             $this->index = new Index();
 			//For future functionality of Twitter.com/profiles/Steve                
             $multparams = false;
-			$page = $_GET['page'];
-            $loading = $this->index->searchIndex($page);
-			$this->$loading($multparams);
+//			$page = $_GET['page'];
+    //        $loading = $this->index->searchIndex($page);
+		//	$this->$loading($multparams);
         }
 		//View is an element of a page        
         private function loadView($view, $data){
@@ -48,7 +48,8 @@ class Controller{
 			$this->loadView($view, array('User' => $user));
 		}
 
-        private function authCheck(){
+        // private 
+		function authCheck(){
 			if(isset($_COOKIE['user'])){
 				return $this->model->cookieCheck($_COOKIE['user']);
 			}
@@ -71,7 +72,9 @@ class Controller{
 			}
 		}
 
-        private function signUp(){
+      //  private 
+	  function signUp(){
+		if(isset($_POST['create'])){
             $signup = array(
                 'username' => $_POST['username'],
                 'email' => $_POST['email'],
@@ -79,35 +82,43 @@ class Controller{
                 'firstname' => $_POST['firstname'],
                 'lastname' => $_POST['lastname']
             );
-            $register = $this->model->registerUser($signup);
-            if($register === true){
-                $this->redirect("home");
+            // $register = $this->model->registerUser($signup);
+            if($this->model->registerUser($signup) === true){
+                $this->redirect("views/home.php");
             }
             else{
-                $this->redirect("home");
+                $this->redirect("views/createreject.php");
             }
 		}
+	}
     
-		private function login(){
+		//private 
+		function login(){
             $loginInfo = array(
                 'username' => $_POST['username'],
                 'password' => $_POST['password']
             );
             if(isset($_POST['register'])){
 				$user="";
-                $this->loadPage($user, 'create', array());
+				$this->redirect("views/create.php");
+				//  $this->loadPage($user, 'create', array());
             }
+			else if(isset($_POST['forgotpw'])){
+				$this->redirect("views/forgot.php");
+			}
             else if($this->model->attemptLogin($loginInfo) === true){
-				$this->redirect("feed");
+				// $this->redirect("feed");
+				$this->redirect("views/home.php");
 			}
 			else{
-				$this->redirect("home");
+				$this->redirect("views/reject.php");
 			}
         }
         
-        private function logout(){
+        // private 
+		function logout(){
 			$this->model->logoutUser($_COOKIE['user']);
-			$this->redirect("home");
+			// $this->redirect("views/");
 		}
 	
 		private function submitPost(){
