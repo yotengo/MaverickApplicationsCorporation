@@ -320,16 +320,14 @@ Class Model{
 		}
 		else
 		{
-			$userName = $post->getUserName();
-			$name = $post->getName();
 			$userID = $post->getUserID();
 			$thePost = $post->getPost();
 			$timePosted = $post->getTimePosted();
 			$numOfLikes = $post->getNumOfLikes();
 			
-			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes,Username,Name) VALUES (?,?,?,?,?,?)");
+			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
 			
-			$query->bind_param("dssdss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes,$userName,$name);
+			$query->bind_param("dssdss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
 			
 			$query->execute();
 				
@@ -529,7 +527,8 @@ Class Model{
 		else
 		{
 			
-			$query = mysqli_prepare($con,"SELECT * FROM Post WHERE UserID = ?");
+			$query = mysqli_prepare($con,"SELECT  p.PostID, p.UserID, p.Post, 
+				p.TimePosted, post.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE UserID = ?");
 			
 			$query->bind_param("d",$userID);
 			
@@ -539,8 +538,8 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$row['Name']);
+				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
 				$posts[$i] = $post;
 				
@@ -582,7 +581,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name FROM Post JOIN User AS FollowedUser ON Post.UserID = 
+				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN User AS FollowedUser ON Post.UserID = 
 				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
 				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?;");
 			
@@ -594,8 +593,8 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$row['Name']);
+				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
 				$posts[$i] = $post;
 				
@@ -634,7 +633,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name FROM Post JOIN PostHashtags ON Post.PostID = 
+				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN PostHashtags ON Post.PostID = 
 				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
 				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
 				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");
@@ -647,8 +646,8 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$row['Name']);
+				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
 				$posts[$i] = $post;
 				
@@ -879,7 +878,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name FROM Post JOIN User ON Post.UserID = 
+				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN User ON Post.UserID = 
 				User.UserID WHERE User.UserName = ?");
 			
 			$query->bind_param("s",$username);
@@ -890,8 +889,8 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'], $row['Username'],$row['Name']);
+				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
 				$posts[$i] = $post;
 				
@@ -933,7 +932,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, Post.TimePosted, 
-				Post.NumOfLikes, Post.Username, Post.Name FROM Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
+				Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.LastName, User.FirstName FROM User, Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
 				Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID WHERE Hashtag = ?");
 			
 			$query->bind_param("s",$hashtag);
@@ -944,8 +943,8 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'], $row['Username'],$row['Name']);
+				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
 				$posts[$i] = $post;
 				
