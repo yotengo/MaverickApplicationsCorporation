@@ -145,13 +145,7 @@ Class Model{
      * @author Stephen
      */
     public function logoutUser($username){
-	
-	// don't know if below works...
-	 unset($_COOKIE['user']);
-	
-	
-	//what is delete?
-         // $this->delete("user", $username);
+		setcookie('user', '', time()-60*60*24*365);
     }
 
 	/**
