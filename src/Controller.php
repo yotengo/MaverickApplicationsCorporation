@@ -128,9 +128,11 @@ class Controller{
 			}
 			else{
 				$postText = $_POST['text'];
+				$userName = $user->Username;
+				$name = $user->FirstName . ' ' . $user->LastName;
 				$userID = $user->UserID;
 				$timePosted = new DateTime('NOW',new DateTimeZone('America/Chicago'));				
-				$post = new Post(0,$userID,$postText,$timePosted,0);
+				$post = new Post(0,$userID,$postText,$timePosted,0, $userName, $name);
 				if(strlen($postText) > 140){
 					$this->redirect("feed");
 					//Need to add an error message here
@@ -149,9 +151,8 @@ class Controller{
 				$this->redirect("home");
 			}
 			else{
-//          	$postFeed = $this->model->getMainPaigePosts($user->getID());           
-//				$this->loadPage($user, "feedpage", array('User' => $user, "messages" => $postFeed));
-				$this->loadPage($user, "feedpage", array('User' => $user));
+				$postfeed = $this->model->getMainPagePosts($user->UserID);           
+				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
 			}
 		}
 }		
