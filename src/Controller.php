@@ -154,4 +154,58 @@ class Controller{
 				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
 			}
 		}
+		//For displaying list of all hashtags
+		private function hashList(){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$hashfeed = $this->model->getListofAllHashtags();           
+				$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
+			}
+		}
+		//For displaying list of all users
+		private function userList(){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$userfeed = $this->model->getListofAllUsers();           
+				$this->loadPage($user, "userlist", array('User' => $user, "hashfeed" => $userfeed));
+			}
+		}
+		
+		//For displaying pages from searching
+		private function search(){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$searchTerm = $_POST['search'];
+				if(searchSelect == '#'){
+					$hashfeed = $this->model->getListofAllHashtags();           
+					$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
+				}
+				else{
+					$check = checkIfHashtagExists($searchTerm);
+					if($check == 1){
+						$posts = getPostsByHashtag($searchTerm);
+						$this->loadPage($user, "hashSearch", array('User' => $user, "hashPosts" => $posts));
+					}
+					else{
+						$users = searchForUser($searchTerm);
+						if(!($users->isEmpty())){							
+							$this->loadPage($user, "userSearch", array('User' => $user, "userList" => $users));					
+						}
+						else{
+							//need to load a blank page saying no results were returned
+						}
+					}
+
+				}
+			}
+		}
 }		

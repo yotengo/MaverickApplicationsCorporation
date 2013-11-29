@@ -318,7 +318,7 @@ Class Model{
 	 * @param takes a post object.
 	 * @author Ryan
 	 */
-	//TESTED
+	//NEW FUNCTIONALITY REQUIRES TESTING
 	function post($post)
 	{
 		// Create connection
@@ -335,20 +335,39 @@ Class Model{
 			$thePost = $post->getPost();
 			$timePosted = $post->getTimePosted();
 			$numOfLikes = $post->getNumOfLikes();
-			
+			$hash = getPostHashtags($thePost);
+
 			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
 			
 			$query->bind_param("dsss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
-			//above was dssdss
 			
 			$query->execute();
-			
-			//below by Kevin
 			if($query===false){
 				return false;
 			}
-			// echo $query;//this can be used to show errors
-				
+			$query->close();
+			if($hash !== false){
+				$query = $con->prepare("SELECT PostID FROM Post WHERE Post.Post = ?");
+				$query->bind_param("s",$thePost);
+				$query->execute();
+				$query->bind_result($postID);
+				$query->fetch();
+				$query->close();
+				foreach($hash as $hashtag){
+					$exists = checkIfHashtagExists($hashtag);
+					if($exists == 0){
+						createHashtag($hashtag);
+					}
+					$query = $con->prepare("SELECT HashtagID FROM Hashtag WHERE Hashtag.Hashtag = ?");
+					$query->bind_param("s",$hashtag);
+					$query->execute();
+					$query->bind_result($hashid);
+					$query->fetch();
+					$query->close();
+					postHashtag($postID,$hashID);
+				}				
+
+			}	
 		}
 			
 		//close connection
@@ -390,7 +409,25 @@ Class Model{
 		//close connection
 		mysqli_close($con);
 	}
-
+	/**
+	 * This function gets the hashtags within a post.  
+	 *
+	 * @param takes in the post string
+	 * @return false or array of hashtags
+	 * @author Steve
+	 */
+	//NEEDS TESTING
+	function getPostHashtags($post){
+		$matches = array();
+		$hashtags = false;
+		preg_match_all('/#\S*\w/i', $post, $matches);
+		if ($matches){
+			$hashes = array_count_values($matches[0]);
+			$hashtags = array_keys($hashes);
+		}
+		return $hashtags;
+	}
+	
 	/**
 	 * This function associates the post with the hashtag.
 	 *
