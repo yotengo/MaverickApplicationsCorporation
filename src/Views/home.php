@@ -2,11 +2,19 @@
 require("../Controller.php");
 require("../View.php");
 
-	function load(){
+	function login(){
+		// $control = new Controller();
+		// $control-> login();
 		$view = new View();
-		$view->displayHeader("home2.php");
+		if(empty($_COOKIE)){
+	// above check seems to work. Use it in the rest of the site
+		 // echo "<p>logged in as nobody...</p>";
+			$view->displayLoginSub();
+		}else{
+			$view->displayHeader("home2.php");
+		}
 	}
-	load();
+	login();
 	exit;
 	echo "<html>";
 	echo "<head>";

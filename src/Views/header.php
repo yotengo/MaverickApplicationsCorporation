@@ -8,17 +8,18 @@ require("../View.php");
 	$view = new View();
 	$control = new Controller();
 	
-	function logoff(){
-		$model= new Model();
-		$view = new View();
-		$control = new Controller();
-		if(isset($_POST['logoff'])){
+	// function logoff(){
+		// $model= new Model();
+		// $view = new View();
+		// $control = new Controller();
+		// if(isset($_POST['logoff'])){
 			// echo("Test message");
-			$control->logout();
-			$view->displayLogin();
-		}
-	}
+			// $control->logout();
+			// $view->displayLogin();
+		// }
+	// }
 
+	// logoff();
 echo "<html>".PHP_EOL;
 
 echo "<body bgcolor=\"aqua\">".PHP_EOL;
@@ -26,13 +27,13 @@ echo "<body bgcolor=\"aqua\">".PHP_EOL;
 
 //<!--The style="float: right;" part is used to keep the logout on the right side of the header (since it looks nicer)-->
 
-echo "<form name=\"login\" action=\"\" method=\"post\" onsubmit=\"return true\">".PHP_EOL;
+echo "<form name=\"login\" action=\"temp.php\" method=\"post\">".PHP_EOL;
 
-echo "<button type=\"submit\" name=\"logoff\" onclick=\"logoff()\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
+echo "<button type=\"submit\" name=\"logoff\" onclick=\"return true\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
 echo "Logout".PHP_EOL;
 echo "</button>".PHP_EOL;
 echo "</form>".PHP_EOL;
 echo "</body>".PHP_EOL;
 echo "</html>".PHP_EOL;
-logoff();
+// logoff();
 ?>

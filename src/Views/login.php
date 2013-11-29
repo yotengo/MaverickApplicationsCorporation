@@ -12,8 +12,10 @@ require ("../View.php");
 		$control = new Controller();
 		$view 	= new View();
 		$model = new Model();
-		if(isset($_POST['username'])&&isset($_POST['password'])){
-			$control -> login();
+		if(isset($_POST['username'])&&isset($_POST['password'])&&$_POST['username']!=""&&$_POST['password']!=""){
+			if(!empty($_POST)){
+				$control -> login();
+			}
 //			$view -> displayHeader("views/home.php");
 		}else{
 			// unset($_POST);

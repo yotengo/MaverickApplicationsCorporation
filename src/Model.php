@@ -92,20 +92,31 @@ Class Model{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
         $query = $con->prepare(/*$con,*/"SELECT User.* FROM User WHERE User.Username = ?");
-        if($query===false){
-			return false;
-		}
+        // if($query===false){
+			// return false;
+		// }
 		$query->bind_param("s", $username);
 		$query->execute();
-		$check = $conn->query($query);
+		$check =  $query->get_result();
+		// $con->query($query);//this was how it was
         if($check->num_rows > 0){
+			// print_r($check->fetch_object());//debugging
             return $check->fetch_object();
-        }
-        else{
+        }else{
             return false;
         }
 		$query->close();
-		$conn->close();
+		$con->close();
+		
+		//below portion
+		//@author Kevin
+		// if(isset($_COOKIE['user'])&&($_COOKIE['user']!="")){
+			// if(strcmp($_COOKIE['user'],$username)===0){
+				// return true;
+			// }	
+		// }else{
+			// return false;
+		// }
     }
 	
     /**
@@ -327,9 +338,16 @@ Class Model{
 			
 			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
 			
-			$query->bind_param("dssdss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
+			$query->bind_param("dsss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
+			//above was dssdss
 			
 			$query->execute();
+			
+			//below by Kevin
+			if($query===false){
+				return false;
+			}
+			// echo $query;//this can be used to show errors
 				
 		}
 			
@@ -785,9 +803,14 @@ Class Model{
 			$query->execute();
 			
 			$result = $query->get_result();
+			
+			//debugging
+			// echo $result;
 							
 			while($row = mysqli_fetch_array($result))
 			{
+			
+				// echo $row;
 				
 				$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
 				
@@ -1173,10 +1196,12 @@ class Post
 	{
 		return $this->numOfLikes;
 	}
+	
 		function getUserName()
 	{
 		return $this->userName;
 	}
+
 		function getName()
 	{
 		return $this->name;

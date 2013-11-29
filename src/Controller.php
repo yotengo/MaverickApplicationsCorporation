@@ -51,6 +51,7 @@ class Controller{
         // private 
 		function authCheck(){
 			if(isset($_COOKIE['user'])){
+				// print_r($this->model->cookieCheck($_COOKIE['user']));
 				return $this->model->cookieCheck($_COOKIE['user']);
 			}
 			else{
@@ -121,26 +122,24 @@ class Controller{
 			// $this->redirect("views/");
 		}
 	
-		private function submitPost(){
+		// private 
+		function submitPost(){
 			$user = $this->authCheck();
 			if($user === false){
-				$this->redirect("home");
-			}
-			else{
-				$postText = $_POST['text'];
-				$userName = $user->Username;
-				$name = $user->FirstName . ' ' . $user->LastName;
+				$this->redirect("views/login.php");
+			}else{
+				$postText = $_POST['textarea'];
 				$userID = $user->UserID;
 				$timePosted = new DateTime('NOW',new DateTimeZone('America/Chicago'));				
-				$post = new Post(0,$userID,$postText,$timePosted,0, $userName, $name);
-				if(strlen($postText) > 140){
-					$this->redirect("feed");
-					//Need to add an error message here
-				}
-				else{
+				$post = new Post(0,$userID,$postText,$timePosted,0,$user->Username,$user->FirstName);
+				// if(strlen($postText) > 200){
+					// $this->redirect("feed");
+					// // Need to add an error message here
+				// }
+				// else{
 					$this->model->post($post);
-					$this->redirect("feed");
-				}
+					$this->redirect("views/home2.php");
+				// }
 			}
         
 		}
