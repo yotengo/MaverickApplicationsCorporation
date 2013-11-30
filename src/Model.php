@@ -820,7 +820,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function getListOfAllUsers()
+	function getListOfAllUsers($userid)
 	{
 		$i=0;
 		$users = array();
@@ -848,9 +848,14 @@ Class Model{
 			{
 			
 				// echo $row;
-				
+				$check = checkIfFollowingUser($userid,$row['UserID']);	
 				$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-				
+				if($check = 1){
+					$user->setFollowing(true);
+				}
+				else{
+					$user->setFollowing(false);
+				}
 				$users[$i] = $user;
 				
 				
@@ -873,7 +878,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function getListOfAllHashtags()
+	function getListOfAllHashtags($userid)
 	{
 		$i=0;
 		$hashtags = array();
@@ -896,9 +901,14 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				
+				$check = checkIfFollowingHashtag($userid,$row['HashtagID']);
 				$hashtag = new Hashtag($row['HashtagID'],$row['Hashtag']);
-				
+				if($check = 1){
+					$hashtag->setFollowing(true);
+				}
+				else{
+					$hashtag->setFollowing(false);
+				}
 				$hashtags[$i] = $hashtag;
 				
 				
@@ -1063,7 +1073,7 @@ Class Model{
 	 * @return returns a list of user objects that match the search criteria
 	 * @author Ryan
 	 */
-	function searchForUser($username)
+	function searchForUser($username,$userid)
 	{
 		$i=0;
 		$users = array();
@@ -1103,7 +1113,13 @@ Class Model{
 				{
 				
 					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-				
+					$check = checkIfFollowingUser($userid,$row['UserID']);
+					if($check = 1){
+						$user->setFollowing(true);
+					}
+					else{
+						$user->setFollowing(false);
+					}
 					$users[$i] = $user;
 				
 				
@@ -1130,7 +1146,13 @@ Class Model{
 				{
 				
 					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-					
+					$check = checkIfFollowingUser($userid,$row['UserID']);
+					if($check = 1){
+						$user->setFollowing(true);
+					}
+					else{
+						$user->setFollowing(false);
+					}
 					$users[$i] = $user;
 				
 				
@@ -1160,17 +1182,28 @@ class Hashtag
 {
 	private $hashtagID;
 	private $hashtag;
+	private $following;
 	
 	public function Hashtag($hashtagID,$hashtag)
 	{
 		$this->hashtagID = $hashtagID;
 		$this->hashtag = $hashtag;
+		$this->following = $following;
 	}
 	
 	function getHashtag()
 	{
 		return $this->hashtag;
 	}
+	
+	function getFollowing(){
+		return $this->following;
+	}
+	
+	function setFollowing($follow){
+		$this->following = $follow;
+	}
+	
 }
 
 /**
@@ -1259,6 +1292,7 @@ class User
 	private $email;
 	private $firstName;
 	private $lastName;
+	private $following;
 
 	public function User($userID,$userName,$password,$email,$firstName,$lastName)
 	{
@@ -1268,6 +1302,7 @@ class User
 		$this->email = $email;
 		$this->firstName = $firstName;
 		$this->lastName = $lastName;
+		$this->following = $following;
 	}
 
 	function printUser()
@@ -1298,6 +1333,14 @@ class User
 	function getLastName()
 	{
 		return $this->lastName;
+	}
+	
+	function getFollowing(){
+		return $this->following;
+	}
+	
+	function setFollowing($follow){
+		$this->following = $follow;
 	}
 
 }

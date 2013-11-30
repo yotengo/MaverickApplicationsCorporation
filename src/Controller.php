@@ -161,7 +161,7 @@ class Controller{
 				$this->redirect("home");
 			}
 			else{
-				$hashfeed = $this->model->getListofAllHashtags();           
+				$hashfeed = $this->model->getListofAllHashtags($user->UserID);           
 				$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
 			}
 		}
@@ -172,8 +172,8 @@ class Controller{
 				$this->redirect("home");
 			}
 			else{
-				$userfeed = $this->model->getListofAllUsers();           
-				$this->loadPage($user, "userlist", array('User' => $user, "hashfeed" => $userfeed));
+				$userfeed = $this->model->getListofAllUsers($user->UserID);           
+				$this->loadPage($user, "userlist", array('User' => $user, "userfeed" => $userfeed));
 			}
 		}
 		
@@ -186,7 +186,7 @@ class Controller{
 			else{
 				$searchTerm = $_POST['search'];
 				if(searchSelect == '#'){
-					$hashfeed = $this->model->getListofAllHashtags();           
+					$hashfeed = $this->model->getListofAllHashtags($user->UserID);           
 					$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
 				}
 				else{
@@ -196,7 +196,7 @@ class Controller{
 						$this->loadPage($user, "hashSearch", array('User' => $user, "hashPosts" => $posts));
 					}
 					else{
-						$users = searchForUser($searchTerm);
+						$users = searchForUser($searchTerm,$user->UserID);
 						if(!($users->isEmpty())){							
 							$this->loadPage($user, "userSearch", array('User' => $user, "userList" => $users));					
 						}
@@ -208,4 +208,32 @@ class Controller{
 				}
 			}
 		}
+		
+		private function like($id){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$this->model->like($id);
+			}
+		}
+		private function follow($id){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$this->model->followUser($user, $id);
+			}
+		}
+		private function unfollow($id){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("home");
+			}
+			else{
+				$this->model->unFollowUser($user, $id);
+			}
+		}		
 }		
