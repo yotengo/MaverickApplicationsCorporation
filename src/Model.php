@@ -57,7 +57,7 @@ Class Model{
 	 * @return nothing to return
 	 * @author Ryan, Stephen
 	 */
-	//NEEDS TESTING
+	//TESTED
 	function registerUser($user)
 	{
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
@@ -80,7 +80,8 @@ Class Model{
 	}
 	/**
 	 * 
-	 * Enter description here ...
+	 * Checks the broswer to see if the login cookie is set for the user.  
+	 * Returns the users data
 	 * @param unknown_type $username
 	 * @author Stephen
 	 */
@@ -121,10 +122,11 @@ Class Model{
 	
     /**
      * 
-     * Enter description here ...
+     * Checks if the password is correct and sets the cookie for that user.  
      * @param $loginInfo
      * @author Stephen
      */
+	 //TESTED
     public function attemptLogin($loginInfo){
 		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($conn))
@@ -151,10 +153,12 @@ Class Model{
     
     /**
      * 
-     * Enter description here ...
+     * Logs user out of the system by deleting the cookie.  
+	 * Cookie is removing by setting it to expire at a time in the past.  
      * @param $username
      * @author Stephen
      */
+	 //TESTED
     public function logoutUser($username){
 		setcookie('user', '', time()-60*60*24*365);
     }

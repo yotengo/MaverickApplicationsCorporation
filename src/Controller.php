@@ -34,21 +34,40 @@ class Controller{
 //			$page = $_GET['page'];
     //        $loading = $this->index->searchIndex($page);
 		//	$this->$loading($multparams);
-        }
-		//View is an element of a page        
-        private function loadView($view, $data){
+        }        
+ 
+		/**
+		* Views are elements of pages such as the header, body, and footer
+		* This function loads a view and the data associated with it
+		* @param takes in filename of view and array of data
+		* @author Steve
+		*/
+		//TESTED
+		private function loadView($view, $data){
             if(is_array($data)){
                 extract($data);
             }
             require("Views/" . $view . ".php");
         }
-		//Pages are made up of views(Will incorporate more views as they as designed(.ie
-		// header and footer.
+
+		/**
+		* Pages are made up of views(Will incorporate more views as they as designed(.ie header and footer)
+		* @param takes $user object, view filename, array of data to be loaded on page
+		* @author Steve
+		*/
+		//TESTED
         private function loadPage($user, $view, $data){
 			$this->loadView($view, array('User' => $user));
 		}
 
-        // private 
+
+		/**
+		* Function checks for the cookie associated with login and returns the user's data
+		* This function is called when user's data needs to be passed to a method in the model
+		* @return user array or false if cookie is not set
+		* @author Steve
+		*/
+		//TESTED
 		function authCheck(){
 			if(isset($_COOKIE['user'])){
 				// print_r($this->model->cookieCheck($_COOKIE['user']));
@@ -59,11 +78,22 @@ class Controller{
 			}
         }
         
+		/**
+		* Function will redirect to another page
+		* @param takes in a (String) url
+		* @author Steve
+		*/
+		//TESTED
         private function redirect($url){
 			header("Location: /" . $url);
 		}
         
-        private function contPage(){
+		/**
+		* This function is used to check that login was successful and redirect the user to their home page.  
+		* @author Steve
+		*/
+		//TESTED 
+		private function contPage(){
 			$user = $this->authCheck();
 			if($user === true){
                 $this->redirect("feed");
@@ -73,7 +103,12 @@ class Controller{
 			}
 		}
 
-      //  private 
+		/**
+		* This function passes the signup information to the model so that it can be entered into the database.  
+		* Redirects the user to proper page if the information is correct
+		* @author Steve
+		*/
+		//TESTED
 	  function signUp(){
 		if(isset($_POST['create'])){
             $signup = array(
@@ -93,7 +128,12 @@ class Controller{
 		}
 	}
     
-		//private 
+		/**
+		* Passes the login information to the controller
+		* Handles forgot password and register buttons
+		* @author Steve
+		*/
+		//TESTED
 		function login(){
             $loginInfo = array(
                 'username' => $_POST['username'],
@@ -115,14 +155,23 @@ class Controller{
 				$this->redirect("views/reject.php");
 			}
         }
-        
-        // private 
+         
+		/**
+		* Function called logout in the model and redirects to the login page
+		* @author Steve
+		*/
+		//TESTED
 		function logout(){
 			$this->model->logoutUser($_COOKIE['user']);
 			// $this->redirect("views/");
 		}
 	
-		// private 
+		/**
+		* Takes post information from view and creates Post object that
+		* is passed to the model
+		* @author Steve
+		*/
+		//TESTED
 		function submitPost(){
 			$user = $this->authCheck();
 			if($user === false){
@@ -144,7 +193,12 @@ class Controller{
         
 		}
 	
-		private function feed(){
+		/**
+		* Loads up the main page, gets the array of Posts from the model to display on the page.
+		* @author Steve
+		*/
+		//TESTED
+	private function feed(){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -154,7 +208,11 @@ class Controller{
 				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
 			}
 		}
-		//For displaying list of all hashtags
+		/**
+		* Loads up the page that shows a list of all hashtags
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function hashList(){
 			$user = $this->authCheck();
 			if($user === false){
@@ -165,7 +223,11 @@ class Controller{
 				$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
 			}
 		}
-		//For displaying list of all users
+		/**
+		*  Loads up the page that shows a list of all users
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function userList(){
 			$user = $this->authCheck();
 			if($user === false){
@@ -177,7 +239,12 @@ class Controller{
 			}
 		}
 		
-		//For displaying pages from searching
+		/**
+		* Takes the information from search bar and calls appropriate function from model
+		* First checks for just the #, then checks if they are searching for a hashtag, then defaults to searching  by user.  
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function search(){
 			$user = $this->authCheck();
 			if($user === false){
@@ -185,7 +252,7 @@ class Controller{
 			}
 			else{
 				$searchTerm = $_POST['search'];
-				if(searchSelect == '#'){
+				if($searchTerm == '#'){
 					$hashfeed = $this->model->getListofAllHashtags($user->UserID);           
 					$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
 				}
@@ -209,6 +276,12 @@ class Controller{
 			}
 		}
 		
+		/**
+		* Calls the like function in the model on the appropriate postID
+		* @param takes in a (String) postID
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function like($id){
 			$user = $this->authCheck();
 			if($user === false){
@@ -218,6 +291,13 @@ class Controller{
 				$this->model->like($id);
 			}
 		}
+		
+		/**
+		* Calls model function to follow using user-id and target-user-id
+		* @param takes in a (String) target-user-id
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function follow($id){
 			$user = $this->authCheck();
 			if($user === false){
@@ -227,6 +307,12 @@ class Controller{
 				$this->model->followUser($user, $id);
 			}
 		}
+		/**
+		* Calls model function to unfollow using user-id and target-user-id
+		* @param takes in a (String) target-user-id
+		* @author Steve
+		*/
+		//NOT TESTED
 		private function unfollow($id){
 			$user = $this->authCheck();
 			if($user === false){
@@ -235,5 +321,39 @@ class Controller{
 			else{
 				$this->model->unFollowUser($user, $id);
 			}
-		}		
+		}
+
+		/**
+		* View page should have a drop down menu to select sort criteria.  
+		* Should associate each option with a number. 
+		* (Username:1, Hashtag:2, Likes:3)
+		* Sorts the posts on the user's homepage by username, hashtag, likes, or time.  
+		* Defaults to time.  
+		* @author Steve
+		*/
+		//NOT TESTED
+/*		private function sort(){
+			$user = $this->authCheck();
+			$sortSelect = $_POST['sort'];
+			if($sortSelect == 1){
+				$postfeed = $this->model->getMainPagePosts($user->UserID); 
+				$sortUserName = $this->model->sortPostsByUsername($postfeed);
+				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortUserName));
+			}
+			else if($sortSelect == 2){
+				$postfeed = $this->model->getMainPagePosts($user->UserID);
+				$sortHash = $this->model->sortPostsByHashtag($postfeed);
+				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortHash));
+			}
+			else if($sortSelect == 3){
+				$postfeed = $this->model->getMainPagePosts($user->UserID);  
+				$sortLikes = $this->model->sortPostsByLikes($postfeed);
+				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortLikes));
+			}
+			else{
+				$postfeed = $this->model->getMainPagePosts($user->UserID);           
+				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
+			}
+		}
+*/		
 }		
