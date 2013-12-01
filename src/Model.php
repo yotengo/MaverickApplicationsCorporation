@@ -65,6 +65,7 @@ Class Model{
 		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
+		else{
 			$userName = $user['username'];
 			$password = $user['password'];
 			$email = $user['email'];
@@ -76,7 +77,8 @@ Class Model{
 			$query->execute();
 			$query->close();
 			$conn->close();
-			return true;	
+			return true;
+		}			
 	}
 	/**
 	 * 
@@ -141,7 +143,7 @@ Class Model{
 		$query->bind_result($username,$password);
 		$query->fetch();
 		if($passwordAttempt === $password){
-			setcookie("user",$username);
+            setcookie("user",$username,time()+3600);
 			return true;
 		}
 		else{
@@ -358,9 +360,10 @@ Class Model{
 				$query->fetch();
 				$query->close();
 				foreach($hash as $hashtag){
-					$exists = checkIfHashtagExists($hashtag);
+					$exists = $this->checkIfHashtagExists($hashtag);
 					if($exists == 0){
-						createHashtag($hashtag);
+						$hashobj = new Hashtag(0,$hashtag);
+						$this->createHashtag($hashobj);
 					}
 					$query = $con->prepare("SELECT HashtagID FROM Hashtag WHERE Hashtag.Hashtag = ?");
 					$query->bind_param("s",$hashtag);
@@ -368,7 +371,7 @@ Class Model{
 					$query->bind_result($hashid);
 					$query->fetch();
 					$query->close();
-					postHashtag($postID,$hashID);
+					$this->postHashtag($postID,$hashID);
 				}				
 
 			}	
@@ -958,7 +961,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN User ON Post.UserID = 
+				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN User ON Post.UserID = 
 				User.UserID WHERE User.UserName = ?");
 			
 			$query->bind_param("s",$username);
@@ -1012,7 +1015,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, Post.TimePosted, 
-				Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.LastName, User.FirstName FROM User, Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
+				Post.NumOfLikes, User.UserName, User.LastName, User.FirstName FROM User, Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
 				Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID WHERE Hashtag = ?");
 			
 			$query->bind_param("s",$hashtag);
