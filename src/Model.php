@@ -586,10 +586,10 @@ Class Model{
 		else
 		{
 			
-			$query = mysqli_prepare($con,"SELECT  p.PostID, p.UserID, p.Post, 
-				p.TimePosted, post.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE UserID = ?");
+			$query = $con->prepare(/*$con,*/"SELECT  p.PostID, p.UserID, p.Post, 
+				p.TimePosted, p.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE p.UserID = ? AND u.UserID = ?");
 			
-			$query->bind_param("d",$userID);
+			$query->bind_param("dd",$userID,$userID);
 			
 			$query->execute();
 			
@@ -640,9 +640,15 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN User AS FollowedUser ON Post.UserID = 
+				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN User AS FollowedUser ON Post.UserID = 
 				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
 				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?;");
+				
+				
+				if ( false===$query) {//debugging mysqli
+				die('prepare() failed: ' . htmlspecialchars($con->error));
+				return false;
+			}	
 			
 			$query->bind_param("d",$userID);
 			
@@ -1174,7 +1180,135 @@ Class Model{
 		
 	}
 	
-}
+		/**
+* This function returns a user id given a username
+* @author Kevin
+* return UserId
+*/
+	function getUserIdbyUsername($userName){
+		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn)){
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		$query = $conn->prepare("SELECT UserID FROM User WHERE Username = ?");
+		$query->bind_param("s", $userName);
+		$query->execute();
+		$query->bind_result($userId);
+		$query->fetch();
+	
+		$query->close();
+		$conn->close();
+		return $userId;
+	}
+	
+	
+/**
+* This function returns a post id given the content of the post
+* (Since two posts could have the same content, this will just return the most recent one, 
+* since this function is primary to associate hashtags and posts)
+* @author Kevin
+* return PostId
+*/
+	function getPostIdbyContent($post){
+		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn)){
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		$query = $conn->prepare("SELECT PostID FROM Post WHERE Post = ?");
+		$query->bind_param("s", $post);
+		$query->execute();
+		$query->bind_result($postId);
+		$query->fetch();
+	
+		$query->close();
+		$conn->close();
+		return $postId;
+	}
+	
+	
+	/**
+* This function returns a hashtag id given the hashtag
+* @author Kevin
+* return HashtagId
+*/
+	function getHashtagIdbyHashtag($hashtag){
+		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn)){
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		$query = $conn->prepare("SELECT HashtagID FROM Hashtag WHERE Hashtag = ?");
+		$query->bind_param("s", $hashtag);
+		$query->execute();
+		$query->bind_result($hashtagId);
+		$query->fetch();
+	
+		$query->close();
+		$conn->close();
+		return $hashtagId;
+	}
+	
+
+	/**
+	 * This function returns a list of hashtags that match $hashtag.
+	 * 
+	 * FOR DEBUGGING: make sure any leading or trailing spaces are trimmed from 
+	 * the string before passing it into this method!
+	 * 
+	 * @param takes in a (String) representing the hashtag
+	 * @return returns a list of hastag objects that match the search criteria
+	 * @author Kevin (copied from searchForUser)
+	 */
+	function searchForHashtag($hashtag)
+	{
+		$i=0;
+		$hashtags = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			//if searching with one word (by hashtag)
+			
+				//changing the string like this will allow it to match on partial entry
+				$hashtag = '%' . $hashtag . '%';
+				$query = mysqli_prepare($con,"SELECT * FROM Hashtag WHERE Hashtag LIKE ?");
+			
+				$query->bind_param("s",$hashtag);
+			
+				$query->execute();
+			
+				$result = $query->get_result();
+							
+				while($row = mysqli_fetch_array($result))
+				{
+				// public function Hashtag($hashtagID,$hashtag)
+					$hashtag1 = new Hashtag($row['HashtagID'],$row['Hashtag']);
+					
+					$hashtags[$i] = $hashtag1;
+				
+				
+					$i++;
+				}
+			
+		
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $hashtags;
+		
+	}
+	
+	
+}//end of model class
 
 /**
  * Test stub for hashtag
@@ -1246,7 +1380,11 @@ class Post
 		echo $this->postID . PHP_EOL;
 		echo $this->userID . PHP_EOL;
 		echo $this->post . PHP_EOL;
-		echo $this->timePosted->format('Y-m-d H:i:s') . PHP_EOL;
+		if(is_object($this->timePosted)){
+			echo $this->timePosted->format('Y-m-d H:i:s') . PHP_EOL;
+		}else{
+			echo $this->timePosted .PHP_EOL;//since the date is stored in the database as a string, it won't be an object
+		}
 		echo $this->numOfLikes . PHP_EOL;
 		echo '-------------' . PHP_EOL;
 	}
@@ -1254,6 +1392,11 @@ class Post
 	function getUserID()
 	{
 		return $this->userID;
+	}
+	
+	function getPostID()
+	{
+		return $this->postID;
 	}
 
 	function getPost()
