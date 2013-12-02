@@ -165,6 +165,26 @@ class Controller{
 				$this->redirect("views/reject.php");
 			}
         }
+		function changePass(){
+			$user = $this->authCheck();
+			if($user === false){
+				$this->redirect("views/changepass.php");
+			}else{
+				if(isset($_POST['change'])){
+					$pass = $_POST['newpass'];
+					$oldpass = $_POST['oldpass'];
+					if($this->model->changePass($oldpass, $pass,$user->UserID) === true){
+						$this->logout();
+						$this->redirect("views/login.php");
+					}
+					else{
+						$this->redirect("views/changepass.php");
+					}
+				}
+			}			
+		
+	}
+		}
          
 		/**
 		* Function called logout in the model and redirects to the login page

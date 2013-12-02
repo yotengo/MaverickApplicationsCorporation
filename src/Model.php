@@ -118,6 +118,35 @@ Class Model{
 			// return false;
 		// }
     }
+	public function changePass($oldpass, $newpass, $userid)
+		{
+		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else{
+			$query2 = $conn->prepare("Select Password FROM User WHERE UserID = ?");
+			$query2->bind_param("s", $userid);
+			$query2->execute();
+			$query2->bind_result($oldpassword);
+			if(strcmp($oldpassword,$oldpass)===0)){
+				$query = $conn->prepare("Update User SET Password = ? WHERE UserID = ?");			
+				//the string "sssss" indicates 5 strings for the database, since their type in php is not explicit.
+				$query->bind_param("ss",$newpass,$userid);			
+				$query->execute();
+				$query->close();
+				$query2->close();
+				$conn->close();
+				return true;	
+			}
+			else{
+				$con->close();
+				return false;
+			}
+
+		}
+	}
 	
     /**
      * 

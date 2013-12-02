@@ -60,7 +60,33 @@ function userCreate(){
 			$view -> displayPageSub("create.php");
 		}
 }
-
+function changePassword(){	
+	$control = new Controller();
+		$view 	= new View();
+		$model = new Model();
+	
+		 if((($_POST['newpass'])==="")&&(($_POST['newpass2'])==="")){
+			$view -> displayPageSub("changepass.php");
+			return false;
+		}else if(strcmp($_POST['newpass'],$_POST['newpass2'])===0){
+				// continue
+		}else{
+				$view-> displayPageSub("changepass.php");
+				return false;
+			 // if they don't match, return false
+				// echo "<script>alert(\"passwords don't match\")</script>";
+		}
+		
+		if(($_POST['oldpass']==="")||($_POST['newpass']==="")||($_POST['newpass2']==="")){
+			$view -> displayPageSub("changepass.php");
+		}else if(isset($_POST['oldpass'])&&isset($_POST['newpass'])&&isset($_POST['newpass2'])){
+				$control -> changePass();
+				$view -> displayLogin();
+			}
+		}else{
+			$view -> displayPageSub("changepass.php");
+		}
+}
 function post(){
 	$control = new Controller();
 		$view 	= new View();
