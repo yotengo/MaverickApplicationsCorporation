@@ -13,13 +13,21 @@
 		$view = new View();
 		 $view->displayLoginSub();
 	}
+	
+	echo "<form name=\"login\" action=\"temp.php\" method=\"post\">".PHP_EOL;
+echo "<button type=\"submit\" name=\"logoff\" onclick=\"return true\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
+echo "Logout".PHP_EOL;
+echo "</button>".PHP_EOL;
+echo "</form>".PHP_EOL;
+	
 	echo "<p>".PHP_EOL;
 				echo "	<form action=\"temp.php\" method=\"post\">".PHP_EOL;
 				echo "	<input name=\"searchTerm\" type=\"text\">".PHP_EOL;
 				echo "  <select name=\"option\">".PHP_EOL;
-				echo "		<option value=\"fname\">First Name</option>".PHP_EOL;
-				echo "		<option value=\"lname\">Last Name</option>".PHP_EOL;
-				echo "		<option value=\"uname\">Username</option>".PHP_EOL;
+				echo "		<option value=\"user\">User</option>".PHP_EOL;
+				// echo "		<option value=\"fname\">First Name</option>".PHP_EOL;
+				// echo "		<option value=\"lname\">Last Name</option>".PHP_EOL;
+				// echo "		<option value=\"uname\">Username</option>".PHP_EOL;
 				echo "		<option value=\"htag\">Hashtag</option>".PHP_EOL;
 				echo "	</select>".PHP_EOL;
 				echo "	<button type=\"submit\" onclick=\"formSubmit()\" value=\"searchSite2\" name=\"searchSite\">".PHP_EOL;

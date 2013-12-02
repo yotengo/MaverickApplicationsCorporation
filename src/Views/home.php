@@ -11,7 +11,7 @@ require("../View.php");
 		 // echo "<p>logged in as nobody...</p>";
 			$view->displayLoginSub();
 		}else{
-			$view->displayHeader("home2.php");
+			$view->displayPageSub("home2.php");
 		}
 	}
 	login();

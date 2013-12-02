@@ -28,7 +28,6 @@ echo "<body bgcolor=\"aqua\">".PHP_EOL;
 //<!--The style="float: right;" part is used to keep the logout on the right side of the header (since it looks nicer)-->
 
 echo "<form name=\"login\" action=\"temp.php\" method=\"post\">".PHP_EOL;
-
 echo "<button type=\"submit\" name=\"logoff\" onclick=\"return true\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
 echo "Logout".PHP_EOL;
 echo "</button>".PHP_EOL;

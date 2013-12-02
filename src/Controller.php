@@ -135,6 +135,11 @@ class Controller{
 		*/
 		//TESTED
 		function login(){
+			if(isset($_COOKIE['lockout'])){
+				$this->redirect("views/lockout.php");
+				return false;
+			}
+		
             $loginInfo = array(
                 'username' => $_POST['username'],
                 'password' => $_POST['password']
@@ -152,6 +157,11 @@ class Controller{
 				$this->redirect("views/home.php");
 			}
 			else{
+				
+				setcookie('loginattempts', intval($_COOKIE['loginattempts'])+1);
+				if(intval($_COOKIE['loginattempts'])>=5){
+					setcookie('lockout', 1, time()+60);
+				}
 				$this->redirect("views/reject.php");
 			}
         }
@@ -180,7 +190,7 @@ class Controller{
 				$postText = $_POST['textarea'];
 				$userID = $user->UserID;
 				$timePosted = new DateTime('NOW',new DateTimeZone('America/Chicago'));				
-				$post = new Post(0,$userID,$postText,$timePosted,0,$user->Username,$user->FirstName);
+				$post = new Post(0,$userID,$postText,$timePosted,0);
 				// if(strlen($postText) > 200){
 					// $this->redirect("feed");
 					// // Need to add an error message here

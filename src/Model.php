@@ -57,7 +57,7 @@ Class Model{
 	 * @return nothing to return
 	 * @author Ryan, Stephen
 	 */
-	//TESTED
+	//NEEDS TESTING
 	function registerUser($user)
 	{
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
@@ -65,7 +65,6 @@ Class Model{
 		{
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
-		else{
 			$userName = $user['username'];
 			$password = $user['password'];
 			$email = $user['email'];
@@ -77,13 +76,11 @@ Class Model{
 			$query->execute();
 			$query->close();
 			$conn->close();
-			return true;
-		}			
+			return true;	
 	}
 	/**
 	 * 
-	 * Checks the broswer to see if the login cookie is set for the user.  
-	 * Returns the users data
+	 * Enter description here ...
 	 * @param unknown_type $username
 	 * @author Stephen
 	 */
@@ -124,11 +121,10 @@ Class Model{
 	
     /**
      * 
-     * Checks if the password is correct and sets the cookie for that user.  
+     * Enter description here ...
      * @param $loginInfo
      * @author Stephen
      */
-	 //TESTED
     public function attemptLogin($loginInfo){
 		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($conn))
@@ -143,7 +139,7 @@ Class Model{
 		$query->bind_result($username,$password);
 		$query->fetch();
 		if($passwordAttempt === $password){
-            setcookie("user",$username,time()+3600);
+			setcookie("user",$username);
 			return true;
 		}
 		else{
@@ -155,12 +151,10 @@ Class Model{
     
     /**
      * 
-     * Logs user out of the system by deleting the cookie.  
-	 * Cookie is removing by setting it to expire at a time in the past.  
+     * Enter description here ...
      * @param $username
      * @author Stephen
      */
-	 //TESTED
     public function logoutUser($username){
 		setcookie('user', '', time()-60*60*24*365);
     }
@@ -187,7 +181,7 @@ Class Model{
 		else
 		{
 			
-			$query = mysqli_prepare(/*$con,*/"INSERT INTO UserFollowing(UserID,FollowingUserID) VALUES (?,?)");
+			$query = mysqli_prepare($con,"INSERT INTO UserFollowing(UserID,FollowingUserID) VALUES (?,?)");
 			
 			$query->bind_param("dd",$userIDA,$userIDB);
 			
@@ -324,7 +318,7 @@ Class Model{
 	 * @param takes a post object.
 	 * @author Ryan
 	 */
-	//NEW FUNCTIONALITY REQUIRES TESTING
+	//TESTED
 	function post($post)
 	{
 		// Create connection
@@ -341,40 +335,22 @@ Class Model{
 			$thePost = $post->getPost();
 			$timePosted = $post->getTimePosted();
 			$numOfLikes = $post->getNumOfLikes();
-			$hash = getPostHashtags($thePost);
-
+			
 			$query = mysqli_prepare($con,"INSERT INTO Post(UserID,Post,TimePosted,NumOfLikes) VALUES (?,?,?,?)");
 			
 			$query->bind_param("dsss",$userID,$thePost,$timePosted->format('Y-m-d H:i:s'),$numOfLikes);
+			//above was dssdss
 			
 			$query->execute();
-			if($query===false){
-				return false;
-			}
-			$query->close();
-			if($hash !== false){
-				$query = $con->prepare("SELECT PostID FROM Post WHERE Post.Post = ?");
-				$query->bind_param("s",$thePost);
-				$query->execute();
-				$query->bind_result($postID);
-				$query->fetch();
-				$query->close();
-				foreach($hash as $hashtag){
-					$exists = $this->checkIfHashtagExists($hashtag);
-					if($exists == 0){
-						$hashobj = new Hashtag(0,$hashtag);
-						$this->createHashtag($hashobj);
-					}
-					$query = $con->prepare("SELECT HashtagID FROM Hashtag WHERE Hashtag.Hashtag = ?");
-					$query->bind_param("s",$hashtag);
-					$query->execute();
-					$query->bind_result($hashid);
-					$query->fetch();
-					$query->close();
-					$this->postHashtag($postID,$hashID);
-				}				
-
-			}	
+			
+			
+			
+			//below by Kevin
+			// if($query===false){
+				// return false;
+			// }
+			// echo $query;//this can be used to show errors
+				
 		}
 			
 		//close connection
@@ -416,25 +392,7 @@ Class Model{
 		//close connection
 		mysqli_close($con);
 	}
-	/**
-	 * This function gets the hashtags within a post.  
-	 *
-	 * @param takes in the post string
-	 * @return false or array of hashtags
-	 * @author Steve
-	 */
-	//NEEDS TESTING
-	function getPostHashtags($post){
-		$matches = array();
-		$hashtags = false;
-		preg_match_all('/#\S*\w/i', $post, $matches);
-		if ($matches){
-			$hashes = array_count_values($matches[0]);
-			$hashtags = array_keys($hashes);
-		}
-		return $hashtags;
-	}
-	
+
 	/**
 	 * This function associates the post with the hashtag.
 	 *
@@ -456,11 +414,13 @@ Class Model{
 		else
 		{
 			
-			$query = mysqli_prepare($con,"INSERT INTO PostHashtags(UserID,PostID) VALUES (?,?)");
+			$query = mysqli_prepare($con,"INSERT INTO PostHashtags(PostID,HashtagID) VALUES (?,?)");
 			
 			$query->bind_param("dd",$postID,$hashtagID);
 			
 			$query->execute();
+			
+			// echo $query;//debugging
 				
 		}
 			
@@ -561,6 +521,8 @@ Class Model{
 			$mainPageList[$i] = $theirPosts[$i-count($myPosts)];
 		}
 		
+		// print_r($mainPageList);
+		
 		return $this->sortPostsByDate($mainPageList);
 		
 		
@@ -589,10 +551,23 @@ Class Model{
 		else
 		{
 			
+			// $query = mysqli_prepare($con,"SELECT  p.PostID, p.UserID, p.Post, 
+				// p.TimePosted, post.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE u.UserID, p.UserID = ?");
 			$query = $con->prepare(/*$con,*/"SELECT  p.PostID, p.UserID, p.Post, 
 				p.TimePosted, p.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE p.UserID = ? AND u.UserID = ?");
+			// if($query===false){
+				// return false;
+			// }
 			
-			$query->bind_param("dd",$userID,$userID);
+			
+			// if ( false===$query) {//debugging mysqli
+				// die('prepare() failed: ' . htmlspecialchars($con->error));
+				// return false;
+			// }
+			
+			
+			// print_r($query);
+ 			$query->bind_param("dd",$userID,$userID);
 			
 			$query->execute();
 			
@@ -602,6 +577,8 @@ Class Model{
 			{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
 				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
+				
+				// print_r($post);
 				
 				$posts[$i] = $post;
 				
@@ -614,6 +591,8 @@ Class Model{
 		//close connections
 		mysqli_close($con);
 		
+		
+		// print_r($posts);//debugging
 		return $this->sortPostsByDate($posts);
 		
 	}
@@ -645,13 +624,16 @@ Class Model{
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
 				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN User AS FollowedUser ON Post.UserID = 
 				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
-				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?;");
-				
-				
-				if ( false===$query) {//debugging mysqli
+				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?");
+			
+			// if($query===false){
+				// return false;
+			// }	
+
+			if ( false===$query) {//debugging mysqli
 				die('prepare() failed: ' . htmlspecialchars($con->error));
 				return false;
-			}	
+			}			
 			
 			$query->bind_param("d",$userID);
 			
@@ -662,7 +644,9 @@ Class Model{
 			while($row = mysqli_fetch_array($result))
 			{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],""/*$row['Username']*/,$fullname);
+				
+				// print_r($post);
 				
 				$posts[$i] = $post;
 				
@@ -717,6 +701,7 @@ Class Model{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
 				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
 				
+				// print_r($post);//debugging
 				$posts[$i] = $post;
 				
 				
@@ -757,6 +742,9 @@ Class Model{
 	 */
 	private function cmp($postA,$postB)
 	{
+		if((!(is_object($postA)))||(!(is_object($postB)))){
+			return 0;
+		}
 		$dateA = date_create_from_format('Y-m-d H:i:s',$postA->getTimePosted(),new DateTimeZone('America/Chicago'));
 		$dateB = date_create_from_format('Y-m-d H:i:s',$postB->getTimePosted(),new DateTimeZone('America/Chicago'));
 			
@@ -780,6 +768,8 @@ Class Model{
 		}
 			
 	}
+	
+	
 	
 	/**
 	 * This function checks if the given hashtag exists in the database.
@@ -833,7 +823,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function getListOfAllUsers($userid)
+	function getListOfAllUsers()
 	{
 		$i=0;
 		$users = array();
@@ -861,14 +851,9 @@ Class Model{
 			{
 			
 				// echo $row;
-				$check = checkIfFollowingUser($userid,$row['UserID']);	
+				
 				$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-				if($check = 1){
-					$user->setFollowing(true);
-				}
-				else{
-					$user->setFollowing(false);
-				}
+				
 				$users[$i] = $user;
 				
 				
@@ -891,7 +876,7 @@ Class Model{
 	 * @author Ryan
 	 */
 	//TESTED
-	function getListOfAllHashtags($userid)
+	function getListOfAllHashtags()
 	{
 		$i=0;
 		$hashtags = array();
@@ -914,14 +899,9 @@ Class Model{
 							
 			while($row = mysqli_fetch_array($result))
 			{
-				$check = checkIfFollowingHashtag($userid,$row['HashtagID']);
+				
 				$hashtag = new Hashtag($row['HashtagID'],$row['Hashtag']);
-				if($check = 1){
-					$hashtag->setFollowing(true);
-				}
-				else{
-					$hashtag->setFollowing(false);
-				}
+				
 				$hashtags[$i] = $hashtag;
 				
 				
@@ -961,7 +941,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN User ON Post.UserID = 
+				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN User ON Post.UserID = 
 				User.UserID WHERE User.UserName = ?");
 			
 			$query->bind_param("s",$username);
@@ -1015,8 +995,16 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, Post.TimePosted, 
-				Post.NumOfLikes, User.UserName, User.LastName, User.FirstName FROM User, Post JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN 
-				Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID WHERE Hashtag = ?");
+				Post.NumOfLikes, User.UserName, User.LastName, User.FirstName FROM User JOIN Post ON User.UserID = Post.UserID 
+				JOIN PostHashtags ON Post.PostID = PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID 
+				WHERE Hashtag.Hashtag = ?");
+				
+				
+			// if ( false===$query) {//debugging mysqli
+				// die('prepare() failed: ' . htmlspecialchars($con->error));
+				// return false;
+			// }
+				
 			
 			$query->bind_param("s",$hashtag);
 			
@@ -1027,7 +1015,7 @@ Class Model{
 			while($row = mysqli_fetch_array($result))
 			{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
+				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes']);
 				
 				$posts[$i] = $post;
 				
@@ -1086,7 +1074,7 @@ Class Model{
 	 * @return returns a list of user objects that match the search criteria
 	 * @author Ryan
 	 */
-	function searchForUser($username,$userid)
+	function searchForUser($username)
 	{
 		$i=0;
 		$users = array();
@@ -1126,13 +1114,7 @@ Class Model{
 				{
 				
 					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-					$check = checkIfFollowingUser($userid,$row['UserID']);
-					if($check = 1){
-						$user->setFollowing(true);
-					}
-					else{
-						$user->setFollowing(false);
-					}
+				
 					$users[$i] = $user;
 				
 				
@@ -1159,13 +1141,7 @@ Class Model{
 				{
 				
 					$user = new User($row['UserID'],$row['Username'],$row['Password'],$row['Email'],$row['FirstName'],$row['LastName']);
-					$check = checkIfFollowingUser($userid,$row['UserID']);
-					if($check = 1){
-						$user->setFollowing(true);
-					}
-					else{
-						$user->setFollowing(false);
-					}
+					
 					$users[$i] = $user;
 				
 				
@@ -1183,7 +1159,8 @@ Class Model{
 		
 	}
 	
-		/**
+	
+	/**
 * This function returns a user id given a username
 * @author Kevin
 * return UserId
@@ -1311,7 +1288,85 @@ Class Model{
 	}
 	
 	
-}//end of model class
+function makeHashtag(){
+	// $control = new Controller();
+	// $view 	= new View();
+	// $model = new Model();
+	
+	$j=0;
+	$hashtagids=array();
+	$postText = $_POST['textarea'];
+	// $postText = $_COOKIE['textarea'];
+	$hashTagtext="";
+	$make=false;
+	for($i=0;$i<strlen($postText);$i++){
+		if($postText[$i]==='#'){
+			$make=true;
+			// $hashTagtext=$hashTagtext.postText.charAt(i);
+		}else if(($postText[$i]===' ')||($postText[$i]==='.')||($postText[$i]==='?')||($postText[$i]===',')){
+		//the above assumes hashtags can't have whitespace or punctuation marks
+			if($make===true){
+				$hashTag = new Hashtag(0,$hashTagtext);
+				if($this->checkifHashtagExists($hashTagtext)===0){//if the 'new' hashtag doesn't already exist,
+					$this->createHashtag($hashTag);
+				}
+				$hashtagids[$j]=$this->getHashtagIdbyHashtag($hashTagtext);
+				$j++;
+				$make=false;
+				$hashTagtext="";
+			}
+		}else if($make===true){
+			$hashTagtext.=$postText[$i];
+		}
+	}
+	
+	if($make===true){
+		$hashTag = new Hashtag(0,$hashTagtext);
+		if($this->checkifHashtagExists($hashTagtext)===0){//if the 'new' hashtag doesn't already exist,
+			$this->createHashtag($hashTag);
+		}
+		$hashtagids[$j]=$this->getHashtagIdbyHashtag($hashTagtext);
+		$j++;
+		$make=false;
+	}
+	
+	if(!empty($hashtagids)){//if there are hashtags, associate them with the post 
+		// echo "associate is executing";
+		$this->associateHashtags($hashtagids);
+	}
+}
+
+function associateHashtags($hashtagids){//only the last one is associated for some reason
+	// $control = new Controller();
+	// $view 	= new View();
+	// $model = new Model();
+	
+	echo "<br/> Hashtagids: ";
+	print_r($hashtagids);
+	echo "<br/>";
+	// $postid=$this->getPostIdbyContent($_COOKIE['textarea']);
+	$postid=$this->getPostIdbyContent($_POST['textarea']);
+	// for($i=0;$i<count($hashtagids);$i++){
+		// $model->postHashtag($postid,$hashtagids[$i]);
+	// }
+	foreach($hashtagids as $key=> $value){
+		$this->postHashtag($postid,$value);
+	}
+	
+}
+	
+	
+}//end of Model class
+
+
+	
+
+
+
+
+
+
+
 
 /**
  * Test stub for hashtag
@@ -1323,13 +1378,11 @@ class Hashtag
 {
 	private $hashtagID;
 	private $hashtag;
-	private $following;
 	
 	public function Hashtag($hashtagID,$hashtag)
 	{
 		$this->hashtagID = $hashtagID;
 		$this->hashtag = $hashtag;
-		$this->following = $following;
 	}
 	
 	function getHashtag()
@@ -1337,13 +1390,11 @@ class Hashtag
 		return $this->hashtag;
 	}
 	
-	function getFollowing(){
-		return $this->following;
+	function getHashtagID()
+	{
+		return $this->hashtagID;
 	}
 	
-	function setFollowing($follow){
-		$this->following = $follow;
-	}
 	
 }
 
@@ -1366,15 +1417,15 @@ class Post
 	
 	//can't overload constructors in php... so the postID has to be given
 	//it just won't be used when not needed(null).
-	public function Post($postID,$userID,$post,$timePosted,$numOfLikes,$userName,$name)// use the date function for current date/time and to make it formatted nicely
+	public function Post($postID,$userID,$post,$timePosted,$numOfLikes)// use the date function for current date/time and to make it formatted nicely
 	{
 		$this->postID = $postID;
 		$this->userID = $userID;
 		$this->post = $post;
 		$this->timePosted = $timePosted;
 		$this->numOfLikes = $numOfLikes;
-		$this->userName = $userName;
-		$this->name = $name;
+		// $this->userName = $userName;
+		// $this->name = $name;
 	}
 	
 	function printPost()
@@ -1388,18 +1439,19 @@ class Post
 		}else{
 			echo $this->timePosted .PHP_EOL;//since the date is stored in the database as a string, it won't be an object
 		}
+		// echo "Time Posted: ".PHP_EOL;
 		echo $this->numOfLikes . PHP_EOL;
 		echo '-------------' . PHP_EOL;
-	}
-	
-	function getUserID()
-	{
-		return $this->userID;
 	}
 	
 	function getPostID()
 	{
 		return $this->postID;
+	}
+	
+	function getUserID()
+	{
+		return $this->userID;
 	}
 
 	function getPost()
@@ -1442,7 +1494,6 @@ class User
 	private $email;
 	private $firstName;
 	private $lastName;
-	private $following;
 
 	public function User($userID,$userName,$password,$email,$firstName,$lastName)
 	{
@@ -1452,12 +1503,16 @@ class User
 		$this->email = $email;
 		$this->firstName = $firstName;
 		$this->lastName = $lastName;
-		$this->following = $following;
 	}
 
 	function printUser()
 	{
 		echo 'UserName = ' . $this->userName . PHP_EOL;
+	}
+	
+	function getUserID()
+	{
+		return $this->userID;
 	}
 	
 	function getUserName()
@@ -1483,14 +1538,6 @@ class User
 	function getLastName()
 	{
 		return $this->lastName;
-	}
-	
-	function getFollowing(){
-		return $this->following;
-	}
-	
-	function setFollowing($follow){
-		$this->following = $follow;
 	}
 
 }

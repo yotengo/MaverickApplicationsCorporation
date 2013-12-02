@@ -47,6 +47,11 @@ require("../View.php");
 	echo "<p>";
 	if(isset($_COOKIE['user'])){
 		echo "Welcome: ".$_COOKIE['user'];
+		echo "<form name=\"login\" action=\"temp.php\" method=\"post\">".PHP_EOL;
+echo "<button type=\"submit\" name=\"logoff\" onclick=\"return true\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
+echo "Logout".PHP_EOL;
+echo "</button>".PHP_EOL;
+echo "</form>".PHP_EOL;
 	}else{
 		$view = new View();
 		 $view->displayLoginSub();
@@ -54,12 +59,16 @@ require("../View.php");
 	if(empty($_COOKIE)){
 	// above check seems to work. Use it in the rest of the site
 		 echo "<p>logged in as nobody...</p>";
+		 $view->displayLoginSub();
 		// $view->displayLogin();
 	}
+	
+	
+	
 	echo "</p>";
 		// bring in a bunch of info here	
 	// echo "Future posts will show here.<br/>".PHP_EOL;
-	echo "This is the post page".PHP_EOL;
+	// echo "This is the post page".PHP_EOL;
 	
 	echo "<form name=\"login\" action=\"temp.php\" method=\"post\" onsubmit=\"return true\">".PHP_EOL;
 
@@ -83,7 +92,12 @@ require("../View.php");
 	echo "<button onclick=textAreaLengthCheck() type=\"s\" name=\"finalPost\" value=\"false\">".PHP_EOL;
 	echo "Post".PHP_EOL;
 	echo "</button>".PHP_EOL;
+	
 	echo "</form>".PHP_EOL;
+	
+		
+	echo "Back to <a href=\"home2.php\">Home</a>";
+	
 		
 	echo "</body>".PHP_EOL;
 echo "</html>".PHP_EOL;

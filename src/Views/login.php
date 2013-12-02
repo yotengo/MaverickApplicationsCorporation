@@ -8,22 +8,11 @@ require ("../View.php");
 	$control = new Controller();
 	$view 	= new View();
 	$model = new Model();
-	function userlogin(){	
-		$control = new Controller();
-		$view 	= new View();
-		$model = new Model();
-		if(isset($_POST['username'])&&isset($_POST['password'])&&$_POST['username']!=""&&$_POST['password']!=""){
-			if(!empty($_POST)){
-				$control -> login();
-			}
-//			$view -> displayHeader("views/home.php");
-		}else{
-			// unset($_POST);
-			return false;
-			//echo "<p> test message </p>";
-		}
+	
+	if(!isset($_COOKIE['loginattempts'])){
+		setcookie('loginattempts',0);
 	}
-
+	
 	echo "<html>".PHP_EOL;
 	echo "<head>".PHP_EOL;
 	echo "	<title>".PHP_EOL;
@@ -31,15 +20,14 @@ require ("../View.php");
 	echo "	</title>".PHP_EOL;
 	echo "</head>".PHP_EOL;
 	echo "<body>".PHP_EOL;
-	echo "<form name=\"login\" action=\"";
+	echo "<form name=\"login\" action=\"temp.php";
 	//userlogin();
 	echo "\" method=\"post\" onsubmit=\"return true\">".PHP_EOL;
 	echo "		Username: <input type=\"text\" name=\"username\"><br>".PHP_EOL;
 	echo "		Password: <input type=\"password\" name=\"password\"><br>".PHP_EOL;
 	
 	echo "		<button type=\"submit\" name=\"login\" onclick=\"";
-	userlogin();
-	echo "\" value=\"Submit form\">".PHP_EOL;
+	echo "\" value=".$_COOKIE['loginattempts'].">".PHP_EOL;
 	echo "		Login".PHP_EOL;
 	echo "		</button>".PHP_EOL;
 	

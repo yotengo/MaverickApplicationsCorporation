@@ -3,6 +3,32 @@ require("../Controller.php");
 require("../View.php");
 
 
+function userlogin(){	
+		$control = new Controller();
+		$view 	= new View();
+		$model = new Model();
+		if(isset($_POST['username'])&&isset($_POST['password'])&&$_POST['username']!=""&&$_POST['password']!=""){
+			if(!empty($_POST)){
+				$control -> login();
+			}
+//			$view -> displayHeader("views/home.php");
+		}else if(isset($_POST['register'])){
+			$view-> displayPageSub("create.php");
+			// unset($_POST);
+			// return false;
+			//echo "<p> test message </p>";
+		}else if(isset($_POST['forgotpw'])){
+			$view-> displayPageSub("forgot.php");
+			// unset($_POST);
+			// return false;
+			//echo "<p> test message </p>";
+		}else{
+		
+			$view->displayLoginSub();
+			
+		}
+}
+
 
 function userCreate(){	
 	$control = new Controller();
@@ -71,21 +97,25 @@ function publishPost(){
 
 function searchSite(){
 	$control = new Controller();
-	$view 	= new View();
+	$view 	= new View(); 
 	$model = new Model();
 
-	if(($_POST['searchTerm']==="")&&($_POST['option']==="uname")){
-		// $userList=$model->getListOfAllUsers();
-		// foreach ($userList as $key => $value){
-		// // echo "key: ".$key.PHP_EOL;
-		// echo "</p><p>User: ".$value.PHP_EOL;
+	if(($_POST['searchTerm']==="")&&($_POST['option']==="user")){
 		$view->displayPageSub("searchResults.php");
-		setcookie("type","uname");
-	}else if(($_POST['searchTerm']==="")&&($_POST['option']==="htag")){
+		setcookie("type","user");
+	}else if(($_POST['searchTerm']==="#")&&($_POST['option']==="htag")){
 		$view->displayPageSub("searchResults.php");
 		setcookie("type","htag");
+	}else if($_POST['option']==="user"){
+		setcookie("type","limiteduser");
+		setcookie("searchTerm",$_POST['searchTerm']);
+		$view->displayPageSub("searchResults.php");
+	}else if(($_POST['option']==="htag")&&!($_POST['searchTerm']==="")){
+		setcookie("type","limitedhtag");
+		setcookie("searchTerm",substr($_POST['searchTerm'],1));
+		$view->displayPageSub("searchResults.php");
 	}else{
-		echo "No results to show.";
+		echo "No results to show. ";
 		echo "<a href=\"search.php\">Search again</a>";
 		return false;//for now...
 	}
@@ -93,31 +123,43 @@ function searchSite(){
 	
 }
 
-function makeHashtag(){
-	$control = new Controller();
-	$view 	= new View();
-	$model = new Model();
-	
-	
-	$postText = $_POST['textarea'];
-	$hashTagtext="";
-	$make=false;
-	for($i=0;$i<strlen($postText);$i++){
-		if($postText[$i]==='#'){
-			$make=true;
-			// $hashTagtext=$hashTagtext.postText.charAt(i);
-		}else if($postText[$i]===' '){
-			if($make===true){
-				$hashTag = new Hashtag(0,$hashTagtext);
-				$model->createHashtag($hashTag);
-				$make=false;
-			}
-		}else if($make===true){
-			$hashTagtext.=$postText[$i];
-		}
+
+function likePost($postID){
+		$control = new Controller();
+		$view 	= new View();
+		$model=new Model();
+		$model->likePost($postID);
+		$view->displayPageSub("home2.php");
 	}
-	
-	// $model->createHashtag();
+
+function followUser($userID){
+		$control = new Controller();
+		$view 	= new View();
+		$model=new Model();
+		
+		// @return returns 1 if userA is following userB, 0 otherwise
+		
+		$meID=$model->getUserIdbyUsername($_COOKIE['user']);
+		if($model->checkIfFollowingUser($meID,$userID)===0){//if I'm not following the user in question	
+			$model->followUser($meID,$userID);
+		}else if($model->checkIfFollowingUser($meID,$userID)===1){
+			$model->unFollowUser($meID,$userID);
+		}
+}
+
+function followHashtag($hashtagID){
+		$control = new Controller();
+		$view 	= new View();
+		$model=new Model();
+		
+		// @return returns 1 if userA is following userB, 0 otherwise
+		
+		$meID=$model->getUserIdbyUsername($_COOKIE['user']);
+		if($model->checkIfFollowingHashtag($meID,$hashtagID)===0){//if I'm not following the htag in question	
+			$model->followHashtag($meID,$hashtagID);
+		}else if($model->checkIfFollowingHashtag($meID,$userID)===1){
+			$model->unFollowHashtag($meID,$hashtagID);
+		}
 }
 
 
@@ -131,9 +173,16 @@ function makeHashtag(){
 		logoff();
 	}else if(isset($_POST['finalPost'])){
 		publishPost();
-		makeHashtag();
+		setcookie('textarea', $_POST['textarea']);
+		$model->makeHashtag();
 	}else if(isset($_POST['searchSite'])){
 		searchSite();
+	}else if(isset($_POST['likePost'])){
+		likePost($_POST['likePost']);
+	}else if(isset($_POST['followUser'])){
+		followUser($_POST['followUser']);
+	}else{
+		userlogin();
 	}
 	
 	
