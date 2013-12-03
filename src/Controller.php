@@ -170,10 +170,10 @@ class Controller{
 			if($user === false){
 				$this->redirect("views/changepass.php");
 			}else{
-				if(isset($_POST['change'])){
-					$pass = $_POST['newpass'];
-					$oldpass = $_POST['oldpass'];
-					if($this->model->changePass($oldpass, $pass,$user->UserID) === true){
+				if(isset($_POST['changepass'])){
+					$pass = $_POST['NewPass'];
+					$oldpass = $_POST['Password'];
+					if($this->model->changePass($oldpass, $pass, $user->UserID) === true){
 						$this->logout();
 						$this->redirect("views/login.php");
 					}
@@ -184,7 +184,7 @@ class Controller{
 			}			
 		
 	}
-		}
+		
          
 		/**
 		* Function called logout in the model and redirects to the login page
@@ -228,7 +228,7 @@ class Controller{
 		* @author Steve
 		*/
 		//TESTED
-	private function feed(){
+	 function feed(){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -243,7 +243,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function hashList(){
+		 function hashList(){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -258,7 +258,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function userList(){
+		function userList(){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -275,7 +275,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function search(){
+		 function search(){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -312,7 +312,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function like($id){
+		 function like($id){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -328,7 +328,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function follow($id){
+		 function follow($id){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -343,7 +343,7 @@ class Controller{
 		* @author Steve
 		*/
 		//NOT TESTED
-		private function unfollow($id){
+		 function unfollow($id){
 			$user = $this->authCheck();
 			if($user === false){
 				$this->redirect("home");
@@ -352,7 +352,7 @@ class Controller{
 				$this->model->unFollowUser($user, $id);
 			}
 		}
-
+}
 		/**
 		* View page should have a drop down menu to select sort criteria.  
 		* Should associate each option with a number. 
@@ -386,4 +386,4 @@ class Controller{
 			}
 		}
 */		
-}		
+		

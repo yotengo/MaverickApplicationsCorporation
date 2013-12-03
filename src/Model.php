@@ -120,6 +120,9 @@ Class Model{
     }
 	public function changePass($oldpass, $newpass, $userid)
 		{
+		$oldPass = $oldpass;
+		$newPass = $newpass;
+		$userID = $userid;
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($conn))
 		{
@@ -127,21 +130,22 @@ Class Model{
 		}
 		else{
 			$query2 = $conn->prepare("Select Password FROM User WHERE UserID = ?");
-			$query2->bind_param("s", $userid);
+			$query2->bind_param("s", $userID);
 			$query2->execute();
 			$query2->bind_result($oldpassword);
-			if(strcmp($oldpassword,$oldpass)===0)){
-				$query = $conn->prepare("Update User SET Password = ? WHERE UserID = ?");			
+			$query2->fetch();
+			$query2->close();
+			if($oldpassword === $oldPass){
+				$query = $conn->prepare("UPDATE User SET Password=? WHERE UserID = ?");			
 				//the string "sssss" indicates 5 strings for the database, since their type in php is not explicit.
-				$query->bind_param("ss",$newpass,$userid);			
+				$query->bind_param("ss",$newPass,$userID);			
 				$query->execute();
 				$query->close();
-				$query2->close();
 				$conn->close();
 				return true;	
 			}
 			else{
-				$con->close();
+				$conn->close();
 				return false;
 			}
 

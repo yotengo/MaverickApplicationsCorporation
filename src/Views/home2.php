@@ -85,7 +85,11 @@ require("../View.php");
 	echo "Logout".PHP_EOL;
 	echo "</button>".PHP_EOL;
 	echo "</form>".PHP_EOL;
-	
+	echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
+	echo "<button type=\"submit\" name=\"displaychangepass\" onclick=\"return true\" value=\"displaychangepass\" style=\"float: right;\">".PHP_EOL;
+	echo "Change Password".PHP_EOL;
+	echo "</button>".PHP_EOL;
+	echo "</form>".PHP_EOL;
 	// function post(){
 	// $control = new Controller();
 	// $control -> 

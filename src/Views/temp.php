@@ -60,15 +60,23 @@ function userCreate(){
 			$view -> displayPageSub("create.php");
 		}
 }
+function dispChangePassPage(){
+		$control = new Controller();
+		$view 	= new View();
+		$model = new Model();
+		$view-> displayPageSub("changepass.php");
+}
+
+		
 function changePassword(){	
 	$control = new Controller();
 		$view 	= new View();
 		$model = new Model();
 	
-		 if((($_POST['newpass'])==="")&&(($_POST['newpass2'])==="")){
+		 if((($_POST['NewPass'])==="")&&(($_POST['NewPass2'])==="")){
 			$view -> displayPageSub("changepass.php");
 			return false;
-		}else if(strcmp($_POST['newpass'],$_POST['newpass2'])===0){
+		}else if(strcmp($_POST['NewPass'],$_POST['NewPass2'])===0){
 				// continue
 		}else{
 				$view-> displayPageSub("changepass.php");
@@ -77,13 +85,13 @@ function changePassword(){
 				// echo "<script>alert(\"passwords don't match\")</script>";
 		}
 		
-		if(($_POST['oldpass']==="")||($_POST['newpass']==="")||($_POST['newpass2']==="")){
+		if(($_POST['Password']==="")||($_POST['NewPass']==="")||($_POST['NewPass2']==="")){
 			$view -> displayPageSub("changepass.php");
-		}else if(isset($_POST['oldpass'])&&isset($_POST['newpass'])&&isset($_POST['newpass2'])){
+		}else if(isset($_POST['Password'])&&isset($_POST['NewPass'])&&isset($_POST['NewPass2'])){
 				$control -> changePass();
 				$view -> displayLogin();
 			}
-		}else{
+		else{
 			$view -> displayPageSub("changepass.php");
 		}
 }
@@ -207,6 +215,12 @@ function followHashtag($hashtagID){
 		likePost($_POST['likePost']);
 	}else if(isset($_POST['followUser'])){
 		followUser($_POST['followUser']);
+	}
+	else if(isset($_POST['changepass'])){
+		changePassword();
+	}
+	else if(isset($_POST['displaychangepass'])){
+		dispChangePassPage();
 	}else{
 		userlogin();
 	}
