@@ -170,7 +170,11 @@ class Controller{
 			if($user === false){
 				$this->redirect("views/changepass.php");
 			}else{
-				if(isset($_POST['changepass'])){
+				if(isset($_COOKIE['lockout'])){
+					$this->redirect("views/lockout.php");
+					return false;
+				}
+				else if(isset($_POST['changepass'])){
 					$pass = $_POST['NewPass'];
 					$oldpass = $_POST['Password'];
 					if($this->model->changePass($oldpass, $pass, $user->UserID) === true){
@@ -178,6 +182,10 @@ class Controller{
 						$this->redirect("views/login.php");
 					}
 					else{
+						setcookie('changeattempts', intval($_COOKIE['changeattempts'])+1);
+						if(intval($_COOKIE['changeattempts'])>=5){
+							setcookie('lockout', 1, time()+60);
+						}
 						$this->redirect("views/changepass.php");
 					}
 				}
