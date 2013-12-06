@@ -718,7 +718,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, Post.Username, Post.Name, User.UserName, User.FirstName, User.LastName FROM Post JOIN PostHashtags ON Post.PostID = 
+				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN PostHashtags ON Post.PostID = 
 				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
 				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
 				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");
@@ -732,7 +732,7 @@ Class Model{
 			while($row = mysqli_fetch_array($result))
 			{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
-				$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
+				$post = new Post($row['PostID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['UserName'],$fullname);
 				
 				// print_r($post);//debugging
 				$posts[$i] = $post;
@@ -1423,18 +1423,11 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 				{
 					return 0;
 				}
-			}
-				
+			}	
 			return 1;
-			
-		
-		}
-		
-			
+		}			
 		//close connections
 		mysqli_close($con);
-		
-		return $hashtags;
 	}
 	
 	

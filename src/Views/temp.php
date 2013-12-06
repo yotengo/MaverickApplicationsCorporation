@@ -66,11 +66,19 @@ function userCreate(){
 			$view -> displayPageSub("create.php");
 		}
 }
+
 function dispChangePassPage(){
 		$control = new Controller();
 		$view 	= new View();
 		$model = new Model();
 		$view-> displayPageSub("changepass.php");
+}
+
+function dispfolHashPage(){
+		$control = new Controller();
+		$view 	= new View();
+		$model = new Model();
+		$view-> displayPageSub("folHashtags.php");
 }
 
 		
@@ -221,12 +229,17 @@ function followHashtag($hashtagID){
 		likePost($_POST['likePost']);
 	}else if(isset($_POST['followUser'])){
 		followUser($_POST['followUser']);
+	}else if(isset($_POST['followHashtag'])){
+		followHashtag($_POST['followHashtag']);
 	}
 	else if(isset($_POST['changepass'])){
 		changePassword();
 	}
 	else if(isset($_POST['displaychangepass'])){
 		dispChangePassPage();
+	}
+	else if(isset($_POST['displayhashtagfollowing'])){
+		dispfolHashPage();
 	}else{
 		userlogin();
 	}

@@ -13,13 +13,13 @@ require("../View.php");
 		// $view -> displayPageSub("post.php");
 	// }
 	
-	function pagePosts(){
+	function hashPosts(){
 		$model= new Model();
 		$view = new View();
 		$control = new Controller();
 		
 		$userId=$model->getUserIdbyUsername($_COOKIE['user']);
-		$posts=$model->getMainPagePosts($userId);
+		$posts=$model->getFollowedHashtagPosts($userId);
 		// echo "Your userID is: ".$userId."<br/>";
 		// print_r($model->makeHashtag());
 		// print_r($posts);
@@ -90,11 +90,6 @@ require("../View.php");
 	echo "Change Password".PHP_EOL;
 	echo "</button>".PHP_EOL;
 	echo "</form>".PHP_EOL;
-	echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
-	echo "<button type=\"submit\" name=\"displayhashtagfollowing\" onclick=\"return true\" value=\"displayhashtagfollowing\" style=\"float: right;\">".PHP_EOL;
-	echo "Your Hashtags".PHP_EOL;
-	echo "</button>".PHP_EOL;
-	echo "</form>".PHP_EOL;
 	// function post(){
 	// $control = new Controller();
 	// $control -> 
@@ -146,7 +141,7 @@ require("../View.php");
 	echo "</p>";
 		// bring in a bunch of info here	
 	// echo "Future posts will show here.<br/>".PHP_EOL;
-	pagePosts();
+	hashPosts();
 	// echo "<br/>This is the home2 page<br/>".PHP_EOL;
 	
 	
