@@ -1387,6 +1387,55 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 	}
 	
 }
+	/**
+	 * This function checks if the indicated username exists in the system already.
+	 * 
+	 * @param (String) $username
+	 * @return returns 0 if the username is in the system already, 1 if not
+	 * @author Ryan
+	 */
+	//TESTED
+	function checkUsernameAvailability($username)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			//if searching with one word (by hashtag)
+			
+			//changing the string like this will allow it to match on partial entry
+			$query = mysqli_prepare($con,"SELECT Username FROM User");
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				if(strcmp($username,$row['Username']) == 0)
+				{
+					return 0;
+				}
+			}
+				
+			return 1;
+			
+		
+		}
+		
+			
+		//close connections
+		mysqli_close($con);
+		
+		return $hashtags;
+	}
 	
 	
 }//end of Model class
@@ -1656,6 +1705,8 @@ $model = new Model();
 //testing searchForUser
 //print_r($model->searchForUser('bo'));
 
+//testing checkUsernameAvailability
+//echo $model->checkUsernameAvailability('sup');
 
 
 

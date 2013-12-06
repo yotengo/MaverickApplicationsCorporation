@@ -35,12 +35,18 @@ function userCreate(){
 		$view 	= new View();
 		$model = new Model();
 	
-		 if((($_POST['password'])==="")&&(($_POST['password2'])==="")){
+		if((($_POST['password'])==="")&&(($_POST['password2'])==="")){
 			$view -> displayPageSub("create.php");
 			return false;
 		}else if(strcmp($_POST['password'],$_POST['password2'])===0){
-				// continue
-		}else{
+			//check if the username is available
+			if ($model->checkUsernameAvailability($_POST['username']) == 0)
+			{
+				$view->displayPageSub("create.php");
+				return false;
+			}
+		}
+		else{
 				$view-> displayPageSub("create.php");
 				return false;
 			 // if they don't match, return false
