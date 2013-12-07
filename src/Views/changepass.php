@@ -10,7 +10,7 @@ if(!isset($_COOKIE['changeattempts'])){
 echo "<html>".PHP_EOL;
 // echo "			<div class=\"panel right\">".PHP_EOL;
 echo "<body>".PHP_EOL;
-echo "				<h1>New to HALlo?</h1>".PHP_EOL;
+echo "				<h1>Change your password.</h1>".PHP_EOL;
 // echo "				<p>".PHP_EOL;
 echo "		<form action=\"temp.php\" method=\"post\">".PHP_EOL;
 echo "			<input name=\"Password\" type=\"password\" placeholder=\"Password\">".PHP_EOL;

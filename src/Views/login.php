@@ -11,7 +11,11 @@ require ("../View.php");
 	
 	if(!isset($_COOKIE['loginattempts'])){
 		setcookie('loginattempts',0);
+	}else if(intval($_COOKIE['loginattempts'])>=6){
+		setcookie('loginattempts',0);
 	}
+	
+	// echo "loginattempts: ".($_COOKIE['loginattempts']);
 	
 	echo "<html>".PHP_EOL;
 	echo "<head>".PHP_EOL;
@@ -20,6 +24,7 @@ require ("../View.php");
 	echo "	</title>".PHP_EOL;
 	echo "</head>".PHP_EOL;
 	echo "<body>".PHP_EOL;
+	echo "				<h1>Welcome to The HAL Interconnection Network. (THIN)</h1>".PHP_EOL;
 	echo "<form name=\"login\" action=\"temp.php";
 	//userlogin();
 	echo "\" method=\"post\" onsubmit=\"return true\">".PHP_EOL;

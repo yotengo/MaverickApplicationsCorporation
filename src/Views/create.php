@@ -29,7 +29,7 @@ function userCreate(){
 echo "<html>".PHP_EOL;
 // echo "			<div class=\"panel right\">".PHP_EOL;
 echo "<body>".PHP_EOL;
-echo "				<h1>New to HALlo?</h1>".PHP_EOL;
+echo "				<h1>New to THIN?</h1>".PHP_EOL;
 // echo "				<p>".PHP_EOL;
 echo "		<form action=\"temp.php\" method=\"post\">".PHP_EOL;
 echo "			<input name=\"email\" type=\"text\" placeholder=\"Email\">".PHP_EOL;

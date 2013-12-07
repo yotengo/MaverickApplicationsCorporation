@@ -161,7 +161,11 @@ function searchSite(){
 	}else if(($_POST['option']==="htag")&&!($_POST['searchTerm']==="")){
 		setcookie("type","limitedhtag");
 		setcookie("searchTerm",substr($_POST['searchTerm'],1));
-		$view->displayPageSub("searchResults.php");
+		$view->displayPageSub("searchResults.php");	
+	}else if(($_POST['option']==="htag")&&($_POST['searchTerm']==="")){
+		echo "Nothing matches that. If your trying to see all hashtags in the system enter a hashtag in the search box.<p>".PHP_EOL;
+		echo "<a href=\"search.php\">Search again</a>";
+		return false;
 	}else{
 		echo "No results to show. ";
 		echo "<a href=\"search.php\">Search again</a>";
@@ -205,7 +209,7 @@ function followHashtag($hashtagID){
 		$meID=$model->getUserIdbyUsername($_COOKIE['user']);
 		if($model->checkIfFollowingHashtag($meID,$hashtagID)===0){//if I'm not following the htag in question	
 			$model->followHashtag($meID,$hashtagID);
-		}else if($model->checkIfFollowingHashtag($meID,$userID)===1){
+		}else if($model->checkIfFollowingHashtag($meID,$hashtagID)===1){
 			$model->unFollowHashtag($meID,$hashtagID);
 		}
 }
@@ -240,15 +244,13 @@ function followHashtag($hashtagID){
 	}
 	else if(isset($_POST['displayhashtagfollowing'])){
 		dispfolHashPage();
+	}else if(isset($_POST['gohome'])){
+		$view 	= new View();
+		$view->displayPageSub("home2.php");
 	}else{
 		userlogin();
 	}
 	
-	
-	// SQL testing****************
-	// USE rcarlso;
-// SHOW TABLES;
-// SELECT * FROM Post;
 
 	exit;
 ?>

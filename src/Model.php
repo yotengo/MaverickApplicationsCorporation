@@ -344,6 +344,47 @@ Class Model{
 		//close connection
 		mysqli_close($con);
 	}
+	
+		/**
+	 * This method deletes an entry in the hashtag following table to allow
+	 * the user to unfollow the indicated hashtag
+	 *
+	 *copied from followHashtag
+	 * 
+	 * @param takes a userID and hashtagID
+	 * @author Kevin
+	 */
+	//NEEDS TESTING
+	function unFollowHashtag($userID,$hashtagID)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			
+			$query = mysqli_prepare($con,"DELETE FROM HashtagFollowing WHERE UserID = ? AND HashtagID = ?");
+			
+			if ( false===$query) {//debugging mysqli
+				die('prepare() failed: ' . htmlspecialchars($con->error));
+				return false;
+			}
+			
+			
+			$query->bind_param("dd",$userID,$hashtagID);
+			
+			$query->execute();
+				
+		}
+			
+		//close connection
+		mysqli_close($con);
+	}
 
 	/**
 	 * This function will create an entry in the post table.

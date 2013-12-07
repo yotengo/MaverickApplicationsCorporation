@@ -35,7 +35,7 @@ require("../View.php");
 		echo "<br/>";
 		
 		if(empty($posts)){
-			echo "No posts to show.";
+			echo "No posts to show. Make a post or follow users for posts to show up here.";
 		}
 		foreach($posts as $key=>$value){
 			if(is_object($value)){
@@ -71,7 +71,8 @@ require("../View.php");
 	}
 	
 	if(isset($_COOKIE['user'])){
-		echo "Welcome: ".$_COOKIE['user'];
+	// echo "<h1>THIN</h1><br/>";
+		echo "Welcome to THIN, ".$_COOKIE['user'];
 	}else{
 		$view = new View();
 		 $view->displayLoginSub();
@@ -84,13 +85,13 @@ require("../View.php");
 	echo "<button type=\"submit\" name=\"logoff\" onclick=\"return true\" value=\"Logout\" style=\"float: right;\">".PHP_EOL;
 	echo "Logout".PHP_EOL;
 	echo "</button>".PHP_EOL;
-	echo "</form>".PHP_EOL;
-	echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
+	// echo "</form>".PHP_EOL;
+	// echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
 	echo "<button type=\"submit\" name=\"displaychangepass\" onclick=\"return true\" value=\"displaychangepass\" style=\"float: right;\">".PHP_EOL;
 	echo "Change Password".PHP_EOL;
 	echo "</button>".PHP_EOL;
-	echo "</form>".PHP_EOL;
-	echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
+	// echo "</form>".PHP_EOL;
+	// echo "<form action=\"temp.php\" method=\"post\">".PHP_EOL;
 	echo "<button type=\"submit\" name=\"displayhashtagfollowing\" onclick=\"return true\" value=\"displayhashtagfollowing\" style=\"float: right;\">".PHP_EOL;
 	echo "Your Hashtags".PHP_EOL;
 	echo "</button>".PHP_EOL;
@@ -118,7 +119,7 @@ require("../View.php");
 	echo "		</button>".PHP_EOL;
 	echo "</form>";
 	
-	echo "<p>";
+	// echo "<p>";
 	// foreach ($_COOKIE as $key => $value){
 		// // echo "key: ".$key.PHP_EOL;
 		// echo "</p><p>Welcome: ".$value.PHP_EOL;

@@ -16,18 +16,18 @@ require("../View.php");
 	}
 	login();
 	exit;
-	echo "<html>";
-	echo "<head>";
-		echo "<title>";
-		echo "Home";
-		echo "</title>";
-	echo "</head>";
-	echo "<body>";
-	// load();
-		// bring in a bunch of info here	
-			echo "Future posts will show here";
-			"This is the home page";
+	// echo "<html>";
+	// echo "<head>";
+		// echo "<title>";
+		// echo "Home";
+		// echo "</title>";
+	// echo "</head>";
+	// echo "<body>";
+	// // load();
+		// // bring in a bunch of info here	
+			// echo "Future posts will show here";
+			// "This is the home page";
 		
-	echo "</body>";
-echo "</html>";
+	// echo "</body>";
+// echo "</html>";
 ?>
