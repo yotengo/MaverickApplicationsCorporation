@@ -2,6 +2,8 @@
 require("../Controller.php");
 require("../View.php");
 
+//google this: how to send a link by email using php
+
 
 function userlogin(){	
 		$control = new Controller();
@@ -23,7 +25,7 @@ function userlogin(){
 			// return false;
 			//echo "<p> test message </p>";
 		}else{
-		
+			echo "<script>alert(\"Enter your information in both fields.\")</script>";
 			$view->displayLoginSub();
 			
 		}
@@ -36,18 +38,24 @@ function userCreate(){
 		$model = new Model();
 	
 		if((($_POST['password'])==="")&&(($_POST['password2'])==="")){
+			echo "<script>alert(\"Password fields are required.\")</script>";
 			$view -> displayPageSub("create.php");
 			return false;
 		}else if(strcmp($_POST['password'],$_POST['password2'])===0){
 			//check if the username is available
 			if ($model->checkUsernameAvailability($_POST['username']) == 0)
 			{
+				echo "<script>alert(\"Sorry. That username is taken. Try adding (more) numbers to the end\")</script>";
 				$view->displayPageSub("create.php");
 				return false;
 			}
 		}
 		else{
+				// echo "Passwords don't match.(1)";
+				echo "<script>alert(\"passwords don't match\")</script>";
 				$view-> displayPageSub("create.php");
+				// echo "Passwords don't match.(2)";
+				// echo "<script>alert(\"passwords don't match(4)\")</script>";
 				return false;
 			 // if they don't match, return false
 				// echo "<script>alert(\"passwords don't match\")</script>";
@@ -56,12 +64,16 @@ function userCreate(){
 		
 		if(($_POST['username']==="")||($_POST['password']==="")||($_POST['email']==="")
 		||($_POST['firstname']==="")||($_POST['lastname']==="")||($_POST['password2']==="")){
+			echo "<script>alert(\"All fields are required.\")</script>";
 			$view -> displayPageSub("create.php");
 		}else if(isset($_POST['username'])&&isset($_POST['password'])&&isset($_POST['email'])
 		&&isset($_POST['firstname'])&&isset($_POST['lastname'])&&isset($_POST['password2'])){
-			$control -> signUp();
+			if ($model->checkUsernameAvailability($_POST['username']) == 1){
+				//if username is available, continue
+				$control -> signUp();
 			
-			$view -> displayLogin();
+				$view -> displayLogin();
+			}
 		}else{
 			$view -> displayPageSub("create.php");
 		}

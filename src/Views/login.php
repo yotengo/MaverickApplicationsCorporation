@@ -15,7 +15,7 @@ require ("../View.php");
 		setcookie('loginattempts',0);
 	}
 	
-	// echo "loginattempts: ".($_COOKIE['loginattempts']);
+	//  echo "loginattempts: ".($_COOKIE['loginattempts']);
 	
 	echo "<html>".PHP_EOL;
 	echo "<head>".PHP_EOL;
