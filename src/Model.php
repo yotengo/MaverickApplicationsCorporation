@@ -1471,6 +1471,65 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 		mysqli_close($con);
 	}
 	
+	/**
+	 * This function gets the username associated with the indicated post.
+	 * 
+	 * @param takes in a post object
+	 * @return returns a (String) username
+	 * @author Ryan
+	 * 
+	 */
+	//TESTED
+	function getUsernameFromPost($post)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{
+			$userID = $post->getUserID();
+			
+			//changing the string like this will allow it to match on partial entry
+			$query = mysqli_prepare($con,"SELECT Username FROM User WHERE UserID = ?");
+			
+			$query->bind_param("d",$userID);
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+							
+			while($row = mysqli_fetch_array($result))
+			{
+				$username = $row['Username'];
+			}
+							
+			
+			return $username;
+		}			
+		//close connections
+		mysqli_close($con);
+	}
+	
+	/**
+	 * This function returns the first hashtag in the post by
+	 * alphabetic order. This is useful in sorting by hashtag
+	 * 
+	 * @param a post object
+	 * @return a (String) hashtag
+	 * @author Ryan
+	 * 
+	 */
+	//NEEDS TESTING
+	function getFirstAlphaHashtag($post)
+	{
+		
+	}
+	
 	
 }//end of Model class
 
@@ -1527,8 +1586,10 @@ class Post
 	private $post;
 	private $timePosted;	//dateTime
 	private $numOfLikes;
+	/*
 	private $userName;
 	private $name;
+	*/
 
 	
 	//can't overload constructors in php... so the postID has to be given
@@ -1710,7 +1771,7 @@ $model = new Model();
 //print_r($model->sortPostsByDate($posts));
 
 //testing getMainPagePosts()
-//print_r($model->getMainPagePosts(2));
+//print_r($model->getMainPagePosts(11));
 
 //testing checkIfHashtagExists
 //echo $model->checkIfHashtagExists('waffles');
@@ -1741,6 +1802,11 @@ $model = new Model();
 
 //testing checkUsernameAvailability
 //echo $model->checkUsernameAvailability('sup');
+
+//testing getUsernameFromPost
+//$posts = $model->getMainPagePosts(1);
+//print_r($posts[0]);
+//echo $model->getUsernameFromPost($posts[0]);
 
 
 

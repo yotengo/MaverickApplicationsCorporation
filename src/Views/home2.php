@@ -17,9 +17,20 @@ require("../View.php");
 		$model= new Model();
 		$view = new View();
 		$control = new Controller();
+		 
 		
 		$userId=$model->getUserIdbyUsername($_COOKIE['user']);
-		$posts=$model->getMainPagePosts($userId);
+		
+		//is we are sorting
+		if(isset($_POST['sortButton']))
+		{
+			$posts=$model->getMainPagePosts($userId);
+			$posts=$control->sort($posts,$_POST['sort']);
+		}
+		//default sort
+		else{
+			$posts=$model->getMainPagePosts($userId);
+		}
 		// echo "Your userID is: ".$userId."<br/>";
 		// print_r($model->makeHashtag());
 		// print_r($posts);
@@ -96,6 +107,9 @@ require("../View.php");
 	echo "Your Hashtags".PHP_EOL;
 	echo "</button>".PHP_EOL;
 	echo "</form>".PHP_EOL;
+	
+	
+	
 	// function post(){
 	// $control = new Controller();
 	// $control -> 
@@ -136,6 +150,23 @@ require("../View.php");
 		 echo "<p>logged in as nobody...</p>";
 		$view->displayLogin();
 	}
+	
+	//trying to add the sort drop down menu
+	//Ryan
+	//echo "<form action=\"nothing happened\">".PHP_EOL;
+	echo "<form action=\"home2.php\" method=\"post\">".PHP_EOL;
+	echo "Sort posts by: ";
+	echo "<select name=\"sort\">".PHP_EOL;
+	echo "<option value=\"1\">username</option>".PHP_EOL;
+	echo "<option value=\"2\">hashtag</option>".PHP_EOL;
+	echo "<option value=\"3\">likes</option>".PHP_EOL;
+	echo "</select>".PHP_EOL;
+	
+	echo "<button onclick=\"\" type=\"s\" name=\"sortButton\" value=\"false\">".PHP_EOL;
+	echo "Sort".PHP_EOL;
+	echo "</button>".PHP_EOL;
+	
+	echo "</form>".PHP_EOL;
 	
 	// if(isset($_COOKIE['user'])){
 		// echo "Welcome: ".$_COOKIE['user'];

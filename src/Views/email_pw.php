@@ -1,6 +1,3 @@
-<?php
-
-?>
 <!DOCTYPE html>
 	<head>
 		<title>
@@ -10,7 +7,6 @@
 		</script>
 	</head>
 	<body>
-	
 		<p> An email has been sent to the associated email </p>
 		
 		<p> <a href="login.php">Return to login</a>

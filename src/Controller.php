@@ -360,38 +360,186 @@ class Controller{
 				$this->model->unFollowUser($user, $id);
 			}
 		}
-}
+		
+	/**
+	 * this is a callback function used to sort posts by username.
+	 * Basically, it's a comparator for the post class.
+	 * 
+	 * @param Two post objects
+	 * @author Ryan
+	 */
+	private function cmpUsername($postA,$postB)
+	{
+		if((!(is_object($postA)))||(!(is_object($postB)))){
+			return 0;
+		}
+			
+		$usernameA = $this->model->getUserNameFromPost($postA);
+		$usernameB = $this->model->getUserNameFromPost($postB);	
+		
+		if(strcmp($usernameA,$usernameB) == 0)
+		{
+			return 0;
+		}
+		else if(strcmp($usernameA,$usernameB) > 0)
+		{
+			return 1;
+		}
+		else if(strcmp($usernameA,$usernameB) < 0)
+		{				
+			return -1;
+		}
+		else
+		{
+			echo 'Something went wrong with sorting of posts by username!';
+		}
+			
+	}
+	
+	/**
+	 * this is a callback function used to sort posts by likes.
+	 * Basically, it's a comparator for the post class.
+	 * 
+	 * @param Two post objects
+	 * @author Ryan
+	 */
+	private function cmpLikes($postA,$postB)
+	{
+		if((!(is_object($postA)))||(!(is_object($postB)))){
+			return 0;
+		}
+			
+		$likesA = $postA->getNumOfLikes();
+		$likesB = $postB->getNumOfLikes();	
+		
+		if($likesA == $likesB)
+		{
+			return 0;
+		}
+		else if($likesA < $likesB)
+		{
+			return 1;
+		}
+		else if($likesA > $likesB)
+		{				
+			return -1;
+		}
+		else
+		{
+			echo 'Something went wrong with sorting of posts by likes!';
+		}
+			
+	}
+	
+	/**
+	 * this is a callback function used to sort posts by hashtag.
+	 * Basically, it's a comparator for the post class.
+	 * 
+	 * @param Two post objects
+	 * @author Ryan
+	 */
+	private function cmpHashtag($postA,$postB)
+	{
+		if((!(is_object($postA)))||(!(is_object($postB)))){
+			return 0;
+		}
+			
+//		$hashtagA = $this->model->getFirstAlphaHashtag($postA);
+//		$hashtagB = $this->model->getFirstAlphaHashtag($postB);	
+		
+//		if($likesA == $likesB)
+//		{
+//			return 0;
+//		}
+//		else if($likesA < $likesB)
+//		{
+//			return 1;
+//		}
+//		else if($likesA > $likesB)
+//		{				
+//			return -1;
+//		}
+//		else
+//		{
+//			echo 'Something went wrong with sorting of posts by likes!';
+//		}
+			
+	}
+			
 		/**
 		* View page should have a drop down menu to select sort criteria.  
 		* Should associate each option with a number. 
 		* (Username:1, Hashtag:2, Likes:3)
 		* Sorts the posts on the user's homepage by username, hashtag, likes, or time.  
 		* Defaults to time.  
-		* @author Steve
+		* @author Steve,Ryan
 		*/
 		//NOT TESTED
-/*		private function sort(){
-			$user = $this->authCheck();
-			$sortSelect = $_POST['sort'];
-			if($sortSelect == 1){
-				$postfeed = $this->model->getMainPagePosts($user->UserID); 
-				$sortUserName = $this->model->sortPostsByUsername($postfeed);
-				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortUserName));
+		function sort($posts,$option){
+			
+			//if sort by username
+			if(strcmp($option,'1') == 0)
+			{
+				usort($posts, array($this, 'cmpUsername'));
+				
+				return $posts;
 			}
-			else if($sortSelect == 2){
-				$postfeed = $this->model->getMainPagePosts($user->UserID);
-				$sortHash = $this->model->sortPostsByHashtag($postfeed);
-				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortHash));
+			//if sort by hashtag
+			else if(strcmp($option,'2') == 0)
+			{
+				usort($posts, array($this, 'cmpHashtag'));
+				
+				return $posts;
 			}
-			else if($sortSelect == 3){
-				$postfeed = $this->model->getMainPagePosts($user->UserID);  
-				$sortLikes = $this->model->sortPostsByLikes($postfeed);
-				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortLikes));
+			//if sort by likes
+			else if(strcmp($option,'3') == 0)
+			{
+				usort($posts, array($this, 'cmpLikes'));
+				
+				return $posts;
 			}
-			else{
-				$postfeed = $this->model->getMainPagePosts($user->UserID);           
-				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
+			//if something else selected
+			else
+			{
+				
 			}
+		
+		
+		
+		
+//			$user = $this->authCheck();
+//			$sortSelect = $_POST['sort'];
+//			if($sortSelect == 1){
+//				$postfeed = $this->model->getMainPagePosts($user->UserID); 
+//				$sortUserName = $this->model->sortPostsByUsername($postfeed);
+//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortUserName));
+//			}
+//			else if($sortSelect == 2){
+//				$postfeed = $this->model->getMainPagePosts($user->UserID);
+//				$sortHash = $this->model->sortPostsByHashtag($postfeed);
+//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortHash));
+//			}
+//			else if($sortSelect == 3){
+//				$postfeed = $this->model->getMainPagePosts($user->UserID);  
+//				$sortLikes = $this->model->sortPostsByLikes($postfeed);
+//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortLikes));
+//			}
+//			else{
+//				$postfeed = $this->model->getMainPagePosts($user->UserID);           
+//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
+//			}
 		}
-*/		
+}
+		
+
+//testing controller functions
+
+$controller = new Controller();
+$model = new Model();
+
+//testing sortbyusername
+//print_r($model->getMainPagePosts(1));
+//print_r($controller->sort($model->getMainPagePosts(1),'1'));
+
+		
 		

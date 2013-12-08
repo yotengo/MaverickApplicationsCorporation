@@ -41,10 +41,6 @@ function userCreate(){
 			echo "<script>alert(\"Password fields are required.\")</script>";
 			$view -> displayPageSub("create.php");
 			return false;
-		}else if(strlen($_POST['password'])<8){ 
-			echo "<script>alert(\"Password must be a least 8 characters long.\")</script>";
-			$view -> displayPageSub("create.php");
-			return false;
 		}else if(strcmp($_POST['password'],$_POST['password2'])===0){
 			//check if the username is available
 			if ($model->checkUsernameAvailability($_POST['username']) == 0)
@@ -73,24 +69,8 @@ function userCreate(){
 		}else if(isset($_POST['username'])&&isset($_POST['password'])&&isset($_POST['email'])
 		&&isset($_POST['firstname'])&&isset($_POST['lastname'])&&isset($_POST['password2'])){
 			if ($model->checkUsernameAvailability($_POST['username']) == 1){
-
-
-			
-				$token = md5($_POST['email'].time());//testing
-				if(mail($_POST['email'], 'Welcome to THIN(1)', $token)===true){
-					echo "<script>alert(\"Account successfully created. Check the provided email for a link(1).\")</script>";
-				}else{
-					echo "<script>alert(\"Something went wrong.\")</script>";
-				}
-				echo "<script>alert(\"Account successfully created. Check the provided email for a link(1).\")</script>";
-
-
-				
-				$control -> signUp();//if username is available, make the account
-				
-				// $token = md5($_POST['email'].time());//testing	
-				// mail($_POST['email'], 'Welcome to THIN(1)', $token);
-				// echo "<script>alert(\"Account successfully created. Check the provided email for a link(2).\")</script>";
+				//if username is available, continue
+				$control -> signUp();
 			
 				$view -> displayLogin();
 			}
@@ -120,10 +100,6 @@ function changePassword(){
 		$model = new Model();
 	
 		 if((($_POST['NewPass'])==="")&&(($_POST['NewPass2'])==="")){
-			$view -> displayPageSub("changepass.php");
-			return false;
-		}else if(strlen($_POST['NewPass'])<8){ 
-			echo "<script>alert(\"Password must be a least 8 characters long.\")</script>";
 			$view -> displayPageSub("changepass.php");
 			return false;
 		}else if(strcmp($_POST['NewPass'],$_POST['NewPass2'])===0){
@@ -184,7 +160,6 @@ function searchSite(){
 	$view 	= new View(); 
 	$model = new Model();
 
-	
 	if(($_POST['searchTerm']==="")&&($_POST['option']==="user")){
 		$view->displayPageSub("searchResults.php");
 		setcookie("type","user");
@@ -200,7 +175,7 @@ function searchSite(){
 		setcookie("searchTerm",substr($_POST['searchTerm'],1));
 		$view->displayPageSub("searchResults.php");	
 	}else if(($_POST['option']==="htag")&&($_POST['searchTerm']==="")){
-		echo "Nothing matches that. If your trying to see all hashtags in the system enter a hashtag ('#') in the search box.<p>".PHP_EOL;
+		echo "Nothing matches that. If your trying to see all hashtags in the system enter a hashtag in the search box.<p>".PHP_EOL;
 		echo "<a href=\"search.php\">Search again</a>";
 		return false;
 	}else{
@@ -250,6 +225,7 @@ function followHashtag($hashtagID){
 			$model->unFollowHashtag($meID,$hashtagID);
 		}
 }
+
 
 
 
