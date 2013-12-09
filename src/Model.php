@@ -370,10 +370,10 @@ Class Model{
 			
 			$query = mysqli_prepare($con,"DELETE FROM HashtagFollowing WHERE UserID = ? AND HashtagID = ?");
 			
-			if ( false===$query) {//debugging mysqli
-				die('prepare() failed: ' . htmlspecialchars($con->error));
-				return false;
-			}
+			// if ( false===$query) {//debugging mysqli
+				// die('prepare() failed: ' . htmlspecialchars($con->error));
+				// return false;
+			// }
 			
 			
 			$query->bind_param("dd",$userID,$hashtagID);
@@ -1262,6 +1262,45 @@ Class Model{
 	}
 	
 	
+	/**
+* This function returns a user's first and last name given a username
+* @author Kevin
+* return fullname(Firstname Lastname)
+*/
+	function getFullnamebyUsername($userName){
+		$conn=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn)){
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		$query = $conn->prepare("SELECT * FROM User WHERE Username = ?");
+		$query->bind_param("s", $userName);
+		$query->execute();
+		
+		
+		// if ( false===$query) {//debugging mysqli
+				// die('prepare() failed: ' . htmlspecialchars($con->error));
+				// return false;
+		// }
+	
+		$result = $query->get_result();
+		$fullName="";
+		while($row = mysqli_fetch_array($result)){
+			$fullName=$row['FirstName']." ".$row['LastName'];
+		}
+	
+		$query->close();
+		$conn->close();
+		return $fullName;
+	
+	
+	
+		$query->close();
+		$conn->close();
+		return $userId;
+	}
+	
+	
+	
 /**
 * This function returns a post id given the content of the post
 * (Since two posts could have the same content, this will just return the most recent one, 
@@ -1630,7 +1669,7 @@ class Post
 		echo '<br/>';
 		echo '-------------' . PHP_EOL;
 		echo 'Authored by: ';
-		echo $model->getUsernameFromPost($this);
+		echo $model->getFullnamebyUsername($model->getUsernameFromPost($this));
 		
 		// echo $user->firstName." ".$user->lastName;
 		echo '-------------' . PHP_EOL;
