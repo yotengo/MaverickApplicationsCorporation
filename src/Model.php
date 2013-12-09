@@ -1531,6 +1531,7 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 	}
 	
 	
+	
 }//end of Model class
 
 
@@ -1586,10 +1587,8 @@ class Post
 	private $post;
 	private $timePosted;	//dateTime
 	private $numOfLikes;
-	/*
 	private $userName;
 	private $name;
-	*/
 
 	
 	//can't overload constructors in php... so the postID has to be given
@@ -1771,7 +1770,7 @@ $model = new Model();
 //print_r($model->sortPostsByDate($posts));
 
 //testing getMainPagePosts()
-//print_r($model->getMainPagePosts(11));
+//print_r($model->getMainPagePosts(2));
 
 //testing checkIfHashtagExists
 //echo $model->checkIfHashtagExists('waffles');
@@ -1807,7 +1806,6 @@ $model = new Model();
 //$posts = $model->getMainPagePosts(1);
 //print_r($posts[0]);
 //echo $model->getUsernameFromPost($posts[0]);
-
 
 
 

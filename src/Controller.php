@@ -361,6 +361,7 @@ class Controller{
 			}
 		}
 		
+			
 	/**
 	 * this is a callback function used to sort posts by username.
 	 * Basically, it's a comparator for the post class.
@@ -541,5 +542,6 @@ $model = new Model();
 //print_r($model->getMainPagePosts(1));
 //print_r($controller->sort($model->getMainPagePosts(1),'1'));
 
-		
+	
+	
 		

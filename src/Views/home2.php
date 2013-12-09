@@ -17,11 +17,10 @@ require("../View.php");
 		$model= new Model();
 		$view = new View();
 		$control = new Controller();
-		 
 		
 		$userId=$model->getUserIdbyUsername($_COOKIE['user']);
 		
-		//is we are sorting
+		//if we are sorting
 		if(isset($_POST['sortButton']))
 		{
 			$posts=$model->getMainPagePosts($userId);
@@ -107,9 +106,6 @@ require("../View.php");
 	echo "Your Hashtags".PHP_EOL;
 	echo "</button>".PHP_EOL;
 	echo "</form>".PHP_EOL;
-	
-	
-	
 	// function post(){
 	// $control = new Controller();
 	// $control -> 
