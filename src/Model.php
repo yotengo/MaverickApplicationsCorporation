@@ -1655,8 +1655,8 @@ class Post
 	{
 		$model=new Model();
 		echo '-------------' . PHP_EOL;
-		echo $this->postID . PHP_EOL;
-		echo $this->userID . PHP_EOL;
+		//echo $this->postID . PHP_EOL;
+		//echo $this->userID . PHP_EOL;
 		echo $this->post . PHP_EOL;
 		if(is_object($this->timePosted)){
 			echo $this->timePosted->format('Y-m-d H:i:s') . PHP_EOL;
@@ -1664,12 +1664,12 @@ class Post
 			echo $this->timePosted .PHP_EOL;//since the date is stored in the database as a string, it won't be an object
 		}
 		// echo "Time Posted: ".PHP_EOL;
-		echo $this->numOfLikes . PHP_EOL;
+		echo "Likes: " . $this->numOfLikes . PHP_EOL;
 		echo '-------------' . PHP_EOL;
 		echo '<br/>';
 		echo '-------------' . PHP_EOL;
 		echo 'Authored by: ';
-		echo $model->getFullnamebyUsername($model->getUsernameFromPost($this));
+		echo $model->getUsernameFromPost($this);
 		
 		// echo $user->firstName." ".$user->lastName;
 		echo '-------------' . PHP_EOL;
