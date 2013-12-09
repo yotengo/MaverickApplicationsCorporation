@@ -759,10 +759,16 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN PostHashtags ON Post.PostID = 
+				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName, User.UserID FROM Post JOIN PostHashtags ON Post.PostID = 
 				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
 				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
 				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");
+			
+			// if ( false===$query) {//debugging mysqli
+				// die('prepare() failed: ' . htmlspecialchars($con->error));
+				// return false;
+			// }
+			
 			
 			$query->bind_param("d",$userID);
 			
@@ -773,7 +779,7 @@ Class Model{
 			while($row = mysqli_fetch_array($result))
 			{
 				$fullname = $row['FirstName'] . ' ' . $row['LastName'];
-				$post = new Post($row['PostID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['UserName'],$fullname);
+				$post = new Post($row['PostID'],$row['UserID'], $row['Post'],$row['TimePosted'],$row['NumOfLikes']);//,$row['UserName'],$fullname);
 				
 				// print_r($post);//debugging
 				$posts[$i] = $post;
