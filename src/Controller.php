@@ -219,6 +219,9 @@ class Controller{
 				$userID = $user->UserID;
 				$timePosted = new DateTime('NOW',new DateTimeZone('America/Chicago'));				
 				$post = new Post(0,$userID,$postText,$timePosted,0);
+				// if($post->setName($user->firstName." ".$user->lastName)==1){
+					// $this->redirect("views/login.php");
+				// }
 				// if(strlen($postText) > 200){
 					// $this->redirect("feed");
 					// // Need to add an error message here

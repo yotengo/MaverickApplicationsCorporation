@@ -24,6 +24,9 @@ echo "\" value=".$_COOKIE['changeattempts'].">".PHP_EOL;
 echo "Change Password";
 echo "</button>";
 echo "					</form>".PHP_EOL;
+
+echo "Back to <a href=home2.php>home</a>".PHP_EOL;
+
 // echo "			</p>".PHP_EOL;
 // echo "		</div>".PHP_EOL;
 echo "<script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js\"></script>".PHP_EOL;

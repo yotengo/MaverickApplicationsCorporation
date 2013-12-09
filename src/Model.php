@@ -1502,6 +1502,8 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 			$query->execute();
 			
 			$result = $query->get_result();
+			
+			$username="";
 							
 			while($row = mysqli_fetch_array($result))
 			{
@@ -1606,6 +1608,7 @@ class Post
 	
 	function printPost()
 	{
+		$model=new Model();
 		echo '-------------' . PHP_EOL;
 		echo $this->postID . PHP_EOL;
 		echo $this->userID . PHP_EOL;
@@ -1617,6 +1620,13 @@ class Post
 		}
 		// echo "Time Posted: ".PHP_EOL;
 		echo $this->numOfLikes . PHP_EOL;
+		echo '-------------' . PHP_EOL;
+		echo '<br/>';
+		echo '-------------' . PHP_EOL;
+		echo 'Authored by: ';
+		echo $model->getUsernameFromPost($this);
+		
+		// echo $user->firstName." ".$user->lastName;
 		echo '-------------' . PHP_EOL;
 	}
 	
@@ -1645,15 +1655,26 @@ class Post
 		return $this->numOfLikes;
 	}
 	
-		function getUserName()
+	function getUserName()
 	{
 		return $this->userName;
 	}
 
-		function getName()
+	function getName()
 	{
 		return $this->name;
 	}
+	
+	function setName($newName){
+		$this->name=$newName;
+		if($this->name===$newname){//debugging
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+	
+	
 }
 
 /**
@@ -1681,37 +1702,37 @@ class User
 		$this->lastName = $lastName;
 	}
 
-	function printUser()
+	public function printUser()
 	{
 		echo 'UserName = ' . $this->userName . PHP_EOL;
 	}
 	
-	function getUserID()
+	public function getUserID()
 	{
 		return $this->userID;
 	}
 	
-	function getUserName()
+	public function getUserName()
 	{
 		return $this->userName;
 	}
 
-	function getPassword()
+	public function getPassword()
 	{
 		return $this->password;
 	}
 
-	function getEmail()
+	public function getEmail()
 	{
 		return $this->email;
 	}
 
-	function getFirstName()
+	public function getFirstName()
 	{
 		return $this->firstName;
 	}
 
-	function getLastName()
+	public function getLastName()
 	{
 		return $this->lastName;
 	}
