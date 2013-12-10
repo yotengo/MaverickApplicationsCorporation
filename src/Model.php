@@ -1574,7 +1574,138 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 	//NEEDS TESTING
 	function getFirstAlphaHashtag($post)
 	{
+		//get all the hashtags from the post
+		$hashtags = $this->getHashtagsFromPost($post);
 		
+		$sortedHashtags = $this->sortHashtags($hashtags);
+		return $sortedHashtags[0];
+	}
+	
+	/**
+	 * Callback function for the hashtag class
+	 */
+	//TESTED
+	private function cmpHashtags($hashtagA,$hashtagB)
+	{
+		if(strcmp($hashtagA->getHashtag(),$hashtagB->getHashtag()) == 0)
+		{
+			return 0;
+		}
+		else if(strcmp($hashtagA->getHashtag(),$hashtagB->getHashtag()) > 0)
+		{
+			return 1;
+		}
+		else if(strcmp($hashtagA->getHashtag(),$hashtagB->getHashtag()) < 0)
+		{
+			return -1;
+		}
+		
+	}
+	
+	/**
+	 * This function sorts a list of hashtag objects
+	 * 
+	 * @param list of hashtags
+	 * @return sorted list of hashtags
+	 * @author Ryan
+	 */
+	//TESTED
+	private function sortHashtags($hashtags)
+	{
+		usort($hashtags, array($this, 'cmpHashtags')); 
+		
+		return $hashtags;
+	}
+	
+	/**
+	 * This function gets a list of hashtags from the indicated post
+	 * 
+	 * @param post object
+	 * @return a list of hashtag objects
+	 * @author Ryan
+	 */
+	//TESTED
+	function getHashtagsFromPost($post)
+	{
+		$i=0;
+		$hashtags = array();
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{			
+			//changing the string like this will allow it to match on partial entry
+			$query = mysqli_prepare($con,"SELECT Hashtag.HashtagID, Hashtag.Hashtag FROM Hashtag 
+				JOIN PostHashtags ON Hashtag.HashtagID = PostHashtags.HashtagID JOIN Post 
+				ON PostHashtags.PostID = Post.PostID WHERE Post.PostID = ?");
+			
+			$query->bind_param("d",$post->getPostID());
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+										
+			while($row = mysqli_fetch_array($result))
+			{
+				$hashtags[$i] = new Hashtag($row['HashtagID'],$row['Hashtag']);
+				
+				$i++;
+			}
+							
+			
+			return $hashtags;
+		}			
+		//close connections
+		mysqli_close($con);
+	}
+	
+	/**
+	 * This function returns the post object with the given postID
+	 * 
+	 * @param (int) postID
+	 * @return post object
+	 * @author Ryan
+	 */
+	//TESTED
+	function getPostByPostID($postID)
+	{
+		// Create connection
+		$con=mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+
+		// Check connection
+		if (mysqli_connect_errno($con))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else
+		{			
+			//changing the string like this will allow it to match on partial entry
+			$query = mysqli_prepare($con,"SELECT  p.PostID, p.UserID, p.Post, 
+				p.TimePosted, p.NumOfLikes FROM Post p WHERE p.postID = ?");
+			
+			$query->bind_param("d",$postID);
+						
+			$query->execute();
+			
+			$result = $query->get_result();
+										
+			$row = mysqli_fetch_array($result);
+			
+			$fullname = $row['FirstName'] . ' ' . $row['LastName'];
+			$post = new Post($row['PostID'],$row['UserID'],$row['Post'],$row['TimePosted'],$row['NumOfLikes'],$row['Username'],$fullname);
+								
+			
+							
+			
+			return $post;
+		}			
+		//close connections
+		mysqli_close($con);
 	}
 	
 	
@@ -1634,8 +1765,10 @@ class Post
 	private $post;
 	private $timePosted;	//dateTime
 	private $numOfLikes;
+	/*
 	private $userName;
 	private $name;
+	*/
 
 	
 	//can't overload constructors in php... so the postID has to be given
@@ -1872,6 +2005,15 @@ $model = new Model();
 //$posts = $model->getMainPagePosts(1);
 //print_r($posts[0]);
 //echo $model->getUsernameFromPost($posts[0]);
+
+//testing getPostByPostID
+//print_r($model->getPostByPostID(10));
+
+//testing getHashtagsFromPost
+//print_r($model->getHashtagsFromPost($model->getPostByPostID(10)));
+
+//testing getFirstAlphaHashtag
+//print_r($model->getFirstAlphaHashtag($model->getPostByPostID(16)));
 
 
 
