@@ -1578,7 +1578,16 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 		$hashtags = $this->getHashtagsFromPost($post);
 		
 		$sortedHashtags = $this->sortHashtags($hashtags);
-		return $sortedHashtags[0];
+		
+		//if the post didn't have any hashtags
+		if(count($sortedHashtags) == 0)
+		{
+			return 'z';
+		}
+		else
+		{
+			return $sortedHashtags[0]->getHashtag();		
+		}
 	}
 	
 	/**
@@ -1618,7 +1627,8 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 	}
 	
 	/**
-	 * This function gets a list of hashtags from the indicated post
+	 * This function gets a list of hashtags from the indicated post. NOTE: this
+	 * function converts all hashtag strings to lower case.
 	 * 
 	 * @param post object
 	 * @return a list of hashtag objects
@@ -1652,7 +1662,8 @@ function associateHashtags($hashtagids){//only the last one is associated for so
 										
 			while($row = mysqli_fetch_array($result))
 			{
-				$hashtags[$i] = new Hashtag($row['HashtagID'],$row['Hashtag']);
+				$hashtag = strtolower($row['Hashtag']);
+				$hashtags[$i] = new Hashtag($row['HashtagID'],$hashtag);
 				
 				$i++;
 			}
@@ -2013,7 +2024,7 @@ $model = new Model();
 //print_r($model->getHashtagsFromPost($model->getPostByPostID(10)));
 
 //testing getFirstAlphaHashtag
-//print_r($model->getFirstAlphaHashtag($model->getPostByPostID(16)));
+//print_r($model->getFirstAlphaHashtag($model->getPostByPostID(1)));
 
 
 

@@ -448,25 +448,25 @@ class Controller{
 			return 0;
 		}
 			
-//		$hashtagA = $this->model->getFirstAlphaHashtag($postA);
-//		$hashtagB = $this->model->getFirstAlphaHashtag($postB);	
+		$hashtagA = $this->model->getFirstAlphaHashtag($postA);
+		$hashtagB = $this->model->getFirstAlphaHashtag($postB);	
 		
-//		if($likesA == $likesB)
-//		{
-//			return 0;
-//		}
-//		else if($likesA < $likesB)
-//		{
-//			return 1;
-//		}
-//		else if($likesA > $likesB)
-//		{				
-//			return -1;
-//		}
-//		else
-//		{
-//			echo 'Something went wrong with sorting of posts by likes!';
-//		}
+		if(strcmp($hashtagA,$hashtagB) == 0)
+		{
+			return 0;
+		}
+		else if(strcmp($hashtagA,$hashtagB) > 0)
+		{
+			return 1;
+		}
+		else if(strcmp($hashtagA,$hashtagB) < 0)
+		{				
+			return -1;
+		}
+		else
+		{
+			echo 'Something went wrong with sorting of posts by hashtags!';
+		}
 			
 	}
 			
