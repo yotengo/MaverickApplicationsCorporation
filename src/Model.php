@@ -131,10 +131,10 @@ Class Model{
 			$query2->bind_result($password);
 			$query2->fetch();
 			$query2->close();
-			$to = "$email";
+			$to = $email;
 			$subject = "T.H.I.N. forgot password";
 			$message = "Your password is" . $password;
-			$from = "THIN priviledge";
+			$from = "THIN";
 			$headers = "From: $from";
 			mail($to,$subject,$message,$headers);
 			$conn->close();
