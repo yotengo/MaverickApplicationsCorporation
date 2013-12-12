@@ -20,9 +20,6 @@ echo "<!DOCTYPE html>";
 	echo "		<button type=\"submit\" name=\"forgotpass\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
 	echo "		Forgot Password";
 	echo "		</button>";
-	echo "		<button type=\"submit\" name=\"forgotuser\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
-	echo "		Forgot Username";
-	echo "		</button>";
 	echo "	</form> ";
 		
 echo "	</body>";

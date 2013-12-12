@@ -272,8 +272,6 @@ function followHashtag($hashtagID){
 		userCreate();
 	}else if(isset($_POST['forgotpass'])){
 		forgotpass();
-	}else if(isset($_POST['forgotuser'])){
-		forgotuser();
 	}else if(isset($_POST['makePost'])){
 		post();
 	}else if(isset($_POST['logoff'])){

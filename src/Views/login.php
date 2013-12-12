@@ -34,11 +34,7 @@ require ("../View.php");
 	echo "		<button type=\"submit\" name=\"login\" onclick=\"";
 	echo "\" value=".$_COOKIE['loginattempts'].">".PHP_EOL;
 	echo "		Login".PHP_EOL;
-	echo "		</button>".PHP_EOL;
-	
-	echo "		<button type=\"s\" name=\"forgotuser\" value=\"false\" onclick=\"return true\">".PHP_EOL;
-	echo "		Forgot Username".PHP_EOL;
-	echo "		</button>".PHP_EOL;
+	echo "		</button>".PHP_EOL;	
 	
 	echo "		<button type=\"s\" name=\"forgotpass\" value=\"false\" onclick=\"return true\">".PHP_EOL;
 	echo "		Forgot Password".PHP_EOL;
@@ -51,10 +47,6 @@ require ("../View.php");
 	echo "	<p>".PHP_EOL;
 	
 	
-	echo "		<button type=\"s\" name=\"forgotpw\" value=\"false\" onclick=\"return true\">".PHP_EOL;
-	//<!--//on click end-->		
-	echo "		Forgot Password?".PHP_EOL;
-	echo "		</button>".PHP_EOL;
 	echo "	</p>".PHP_EOL;
 	echo "	</form> ".PHP_EOL;		
 		
