@@ -165,6 +165,21 @@ class Controller{
 				$this->redirect("views/reject.php");
 			}
         }
+		function forgotPass(){
+			if(isset($_COOKIE['lockout'])){
+				$this->redirect("views/lockout.php");
+				return false;
+			}
+			else if(isset($_POST['email'])){
+				$email = $_POST['email'];
+				if($this->model->forgotPass($email) === true){
+						$this->redirect("views/login.php");
+				}
+				else{
+					$this->redirect("views/forgot.php");
+					}
+				}					
+	}
 		function changePass(){
 			$user = $this->authCheck();
 			if($user === false){

@@ -19,7 +19,7 @@ function userlogin(){
 			// unset($_POST);
 			// return false;
 			//echo "<p> test message </p>";
-		}else if(isset($_POST['forgotpw'])){
+		}else if(isset($_POST['forgotpass']) || isset($_POST['forgotuser'])){
 			$view-> displayPageSub("forgot.php");
 			// unset($_POST);
 			// return false;
@@ -113,7 +113,22 @@ function dispfolHashPage(){
 		$view-> displayPageSub("folHashtags.php");
 }
 
-		
+function forgotpass(){	
+	$control = new Controller();
+		$view 	= new View();
+		$model = new Model();
+	
+		 if((($_POST['email'])===""){
+			$view -> displayPageSub("forgot.php");
+			return false;
+		}else if(isset($_POST['email'])){
+			$control -> forgotPass();
+			$view -> displayLogin();
+		}
+		else{
+			$view -> displayPageSub("forgot.php");
+		}		
+}		
 function changePassword(){	
 	$control = new Controller();
 		$view 	= new View();
@@ -255,6 +270,10 @@ function followHashtag($hashtagID){
 
 	if(isset($_POST['create'])){
 		userCreate();
+	}else if(isset($_POST['forgotpass'])){
+		forgotpass();
+	}else if(isset($_POST['forgotuser'])){
+		forgotuser();
 	}else if(isset($_POST['makePost'])){
 		post();
 	}else if(isset($_POST['logoff'])){

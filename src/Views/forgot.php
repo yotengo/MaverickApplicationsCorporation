@@ -15,10 +15,13 @@ echo "<!DOCTYPE html>";
 			}*/
 	echo "</head>";
 	echo "<body>";
-	echo "	<form name=\"email\" action=\"email_pw.php\" method=\"post\" onsubmit=\"return true\">";
-	echo "		Username: <input type=\"text\" name=\"uname\"><br>";
-	echo "		<button type=\"submit\" onclick=\"formSubmit()\" value=\"Submit form\">";
-	echo "		Email";
+	echo "	<form name=\"email\" action=\"temp.php\" method=\"post\">";
+	echo "		Email: <input type=\"text\" name=\"email\"><br>";
+	echo "		<button type=\"submit\" name=\"forgotpass\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
+	echo "		Forgot Password";
+	echo "		</button>";
+	echo "		<button type=\"submit\" name=\"forgotuser\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
+	echo "		Forgot Username";
 	echo "		</button>";
 	echo "	</form> ";
 		

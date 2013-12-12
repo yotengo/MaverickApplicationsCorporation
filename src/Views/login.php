@@ -36,6 +36,14 @@ require ("../View.php");
 	echo "		Login".PHP_EOL;
 	echo "		</button>".PHP_EOL;
 	
+	echo "		<button type=\"s\" name=\"forgotuser\" value=\"false\" onclick=\"return true\">".PHP_EOL;
+	echo "		Forgot Username".PHP_EOL;
+	echo "		</button>".PHP_EOL;
+	
+	echo "		<button type=\"s\" name=\"forgotpass\" value=\"false\" onclick=\"return true\">".PHP_EOL;
+	echo "		Forgot Password".PHP_EOL;
+	echo "		</button>".PHP_EOL;
+	
 	echo "		<button type=\"s\" name=\"register\" value=\"false\" onclick=\"return true\">".PHP_EOL;
 	echo "		Create an Account".PHP_EOL;
 	echo "		</button>".PHP_EOL;

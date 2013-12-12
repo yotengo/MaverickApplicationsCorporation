@@ -118,6 +118,30 @@ Class Model{
 			// return false;
 		// }
     }
+	public function forgotPass($email){
+		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
+		if (mysqli_connect_errno($conn))
+		{
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		else{
+			$query2 = $conn->prepare("Select Password FROM User WHERE Email = ?");
+			$query2->bind_param("s", $email);
+			$query2->execute();
+			$query2->bind_result($password);
+			$query2->fetch();
+			$query2->close();
+			$to = "$email";
+			$subject = "T.H.I.N. forgot password";
+			$message = "Your password is" . $password;
+			$from = "THIN priviledge";
+			$headers = "From: $from";
+			mail($to,$subject,$message,$headers);
+			$conn->close();
+			return true;	
+			}
+	}
+	
 	public function changePass($oldpass, $newpass, $userid)
 		{
 		$oldPass = $oldpass;
