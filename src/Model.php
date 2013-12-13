@@ -763,7 +763,7 @@ Class Model{
 		{
 			
 			$query = mysqli_prepare($con,"SELECT Post.PostID, Post.UserID, Post.Post, 
-				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName, User.UserID FROM Post JOIN PostHashtags ON Post.PostID = 
+				Post.TimePosted, Post.NumOfLikes, User.UserName, User.FirstName, User.LastName FROM Post JOIN PostHashtags ON Post.PostID = 
 				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
 				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
 				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");

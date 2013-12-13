@@ -249,6 +249,8 @@ function followUser($userID){
 		}else if($model->checkIfFollowingUser($meID,$userID)===1){
 			$model->unFollowUser($meID,$userID);
 		}
+		$view->displayPageSub("home2.php");
+
 }
 
 function followHashtag($hashtagID){
@@ -264,6 +266,7 @@ function followHashtag($hashtagID){
 		}else if($model->checkIfFollowingHashtag($meID,$hashtagID)===1){
 			$model->unFollowHashtag($meID,$hashtagID);
 		}
+		$view->displayPageSub("home2.php");
 }
 
 
