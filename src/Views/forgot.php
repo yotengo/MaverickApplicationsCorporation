@@ -17,7 +17,7 @@ echo "<!DOCTYPE html>";
 	echo "<body>";
 	echo "	<form name=\"email\" action=\"temp.php\" method=\"post\">";
 	echo "		Email: <input type=\"text\" name=\"email\"><br>";
-	echo "		<button type=\"submit\" name=\"forgotpass\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
+	echo "		<button type=\"submit\" name=\"forgot\" value=\"Submit Form\" onclick=\"return true\">".PHP_EOL;
 	echo "		Forgot Password";
 	echo "		</button>";
 	echo "	</form> ";

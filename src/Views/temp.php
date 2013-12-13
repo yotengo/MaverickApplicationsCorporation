@@ -19,7 +19,7 @@ function userlogin(){
 			// unset($_POST);
 			// return false;
 			//echo "<p> test message </p>";
-		}else if(isset($_POST['forgotpass']) || isset($_POST['forgotuser'])){
+		}else if(isset($_POST['forgotpass'])){
 			$view-> displayPageSub("forgot.php");
 			// unset($_POST);
 			// return false;
@@ -118,7 +118,7 @@ function forgotpass(){
 		$view 	= new View();
 		$model = new Model();
 	
-		 if((($_POST['email'])===""){
+		 if(($_POST['email'])===""){
 			$view -> displayPageSub("forgot.php");
 			return false;
 		}else if(isset($_POST['email'])){
@@ -270,7 +270,7 @@ function followHashtag($hashtagID){
 
 	if(isset($_POST['create'])){
 		userCreate();
-	}else if(isset($_POST['forgotpass'])){
+	}else if(isset($_POST['forgot'])){
 		forgotpass();
 	}else if(isset($_POST['makePost'])){
 		post();

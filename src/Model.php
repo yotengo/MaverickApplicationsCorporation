@@ -133,9 +133,9 @@ Class Model{
 			$query2->close();
 			$to = $email;
 			$subject = "T.H.I.N. forgot password";
-			$message = "Your password is" . $password;
-			$from = "THIN";
-			$headers = "From: $from";
+			$message = "Your password is " . $password;
+			$from = "spandorf11@gmail.com";
+			$headers = "From:". $from;
 			mail($to,$subject,$message,$headers);
 			$conn->close();
 			return true;	

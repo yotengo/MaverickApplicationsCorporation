@@ -180,6 +180,7 @@ class Controller{
 					}
 				}					
 	}
+	
 		function changePass(){
 			$user = $this->authCheck();
 			if($user === false){
