@@ -28,12 +28,8 @@ class Controller{
         function __construct(){
             //initialize private variables
             $this->model = new Model();
-            $this->index = new Index();
-			//For future functionality of Twitter.com/profiles/Steve                
+            $this->index = new Index();                
             $multparams = false;
-//			$page = $_GET['page'];
-    //        $loading = $this->index->searchIndex($page);
-		//	$this->$loading($multparams);
         }        
  
 		/**
@@ -165,6 +161,11 @@ class Controller{
 				$this->redirect("views/reject.php");
 			}
         }
+     /**
+     * this calls the model function forgot password
+	 * 
+	 * @author Steve
+	 */
 		function forgotPass(){
 			if(isset($_COOKIE['lockout'])){
 				$this->redirect("views/lockout.php");
@@ -180,7 +181,11 @@ class Controller{
 					}
 				}					
 	}
-	
+			/**
+	 * this calls the model function for changing password
+	 * 
+	 * @author Steve
+	 */
 		function changePass(){
 			$user = $this->authCheck();
 			if($user === false){
@@ -246,8 +251,7 @@ class Controller{
 					$this->model->post($post);
 					$this->redirect("views/home2.php");
 				// }
-			}
-        
+			} 
 		}
 	
 		/**
@@ -263,36 +267,6 @@ class Controller{
 			else{
 				$postfeed = $this->model->getMainPagePosts($user->UserID);           
 				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
-			}
-		}
-		/**
-		* Loads up the page that shows a list of all hashtags
-		* @author Steve
-		*/
-		//NOT TESTED
-		 function hashList(){
-			$user = $this->authCheck();
-			if($user === false){
-				$this->redirect("home");
-			}
-			else{
-				$hashfeed = $this->model->getListofAllHashtags($user->UserID);           
-				$this->loadPage($user, "hashlist", array('User' => $user, "hashfeed" => $hashfeed));
-			}
-		}
-		/**
-		*  Loads up the page that shows a list of all users
-		* @author Steve
-		*/
-		//NOT TESTED
-		function userList(){
-			$user = $this->authCheck();
-			if($user === false){
-				$this->redirect("home");
-			}
-			else{
-				$userfeed = $this->model->getListofAllUsers($user->UserID);           
-				$this->loadPage($user, "userlist", array('User' => $user, "userfeed" => $userfeed));
 			}
 		}
 		
@@ -522,44 +496,10 @@ class Controller{
 			else
 			{
 				
-			}
-		
-		
-		
-		
-//			$user = $this->authCheck();
-//			$sortSelect = $_POST['sort'];
-//			if($sortSelect == 1){
-//				$postfeed = $this->model->getMainPagePosts($user->UserID); 
-//				$sortUserName = $this->model->sortPostsByUsername($postfeed);
-//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortUserName));
-//			}
-//			else if($sortSelect == 2){
-//				$postfeed = $this->model->getMainPagePosts($user->UserID);
-//				$sortHash = $this->model->sortPostsByHashtag($postfeed);
-//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortHash));
-//			}
-//			else if($sortSelect == 3){
-//				$postfeed = $this->model->getMainPagePosts($user->UserID);  
-//				$sortLikes = $this->model->sortPostsByLikes($postfeed);
-//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $sortLikes));
-//			}
-//			else{
-//				$postfeed = $this->model->getMainPagePosts($user->UserID);           
-//				$this->loadPage($user, "feedpage", array('User' => $user, "postfeed" => $postfeed));
-//			}
+			}		
 		}
 }
 		
-
-//testing controller functions
-
-$controller = new Controller();
-$model = new Model();
-
-//testing sortbyusername
-//print_r($model->getMainPagePosts(1));
-//print_r($controller->sort($model->getMainPagePosts(1),'1'));
 
 	
 	

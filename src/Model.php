@@ -57,7 +57,7 @@ Class Model{
 	 * @return nothing to return
 	 * @author Ryan, Stephen
 	 */
-	//NEEDS TESTING
+	//TESTED
 	function registerUser($user)
 	{
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
@@ -98,7 +98,6 @@ Class Model{
 		$query->bind_param("s", $username);
 		$query->execute();
 		$check =  $query->get_result();
-		// $con->query($query);//this was how it was
         if($check->num_rows > 0){
 			// print_r($check->fetch_object());//debugging
             return $check->fetch_object();
@@ -107,17 +106,15 @@ Class Model{
         }
 		$query->close();
 		$con->close();
-		
-		//below portion
-		//@author Kevin
-		// if(isset($_COOKIE['user'])&&($_COOKIE['user']!="")){
-			// if(strcmp($_COOKIE['user'],$username)===0){
-				// return true;
-			// }	
-		// }else{
-			// return false;
-		// }
     }
+
+    	/**
+	 * This function registers a new user in the database
+	 *
+	 * @param takes in email address
+	 * @return true or false
+	 * @author Ryan, Stephen
+	 */
 	public function forgotPass($email){
 		$conn = mysqli_connect("cse.unl.edu","rcarlso","a@9VUi","rcarlso");
 		if (mysqli_connect_errno($conn))
@@ -141,7 +138,14 @@ Class Model{
 			return true;	
 			}
 	}
-	
+
+		/**
+	 * This function registers a new user in the database
+	 *
+	 * @param takes in oldpassword, new password, userid
+	 * @return true or false
+	 * @author  Stephen
+	 */
 	public function changePass($oldpass, $newpass, $userid)
 		{
 		$oldPass = $oldpass;
@@ -161,7 +165,6 @@ Class Model{
 			$query2->close();
 			if($oldpassword === $oldPass){
 				$query = $conn->prepare("UPDATE User SET Password=? WHERE UserID = ?");			
-				//the string "sssss" indicates 5 strings for the database, since their type in php is not explicit.
 				$query->bind_param("ss",$newPass,$userID);			
 				$query->execute();
 				$query->close();
@@ -178,7 +181,7 @@ Class Model{
 	
     /**
      * 
-     * Enter description here ...
+     * Logs the user into the system
      * @param $loginInfo
      * @author Stephen
      */
@@ -208,7 +211,7 @@ Class Model{
     
     /**
      * 
-     * Enter description here ...
+     * Removes cookie and logs user out
      * @param $username
      * @author Stephen
      */
@@ -440,14 +443,6 @@ Class Model{
 			//above was dssdss
 			
 			$query->execute();
-			
-			
-			
-			//below by Kevin
-			// if($query===false){
-				// return false;
-			// }
-			// echo $query;//this can be used to show errors
 				
 		}
 			
@@ -568,7 +563,6 @@ Class Model{
 	 * @return nothing to return
 	 * @author Ryan
 	 */
-	//NEEDS TESTING
 	function likePost($postID)
 	{
 		// Create connection
@@ -649,19 +643,8 @@ Class Model{
 		else
 		{
 			
-			// $query = mysqli_prepare($con,"SELECT  p.PostID, p.UserID, p.Post, 
-				// p.TimePosted, post.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE u.UserID, p.UserID = ?");
 			$query = $con->prepare(/*$con,*/"SELECT  p.PostID, p.UserID, p.Post, 
 				p.TimePosted, p.NumOfLikes, u.Username, u.FirstName, u.LastName FROM Post p, User u WHERE p.UserID = ? AND u.UserID = ?");
-			// if($query===false){
-				// return false;
-			// }
-			
-			
-			// if ( false===$query) {//debugging mysqli
-				// die('prepare() failed: ' . htmlspecialchars($con->error));
-				// return false;
-			// }
 			
 			
 			// print_r($query);
@@ -724,9 +707,6 @@ Class Model{
 				FollowedUser.UserID JOIN UserFollowing ON FollowedUser.UserID = 
 				UserFollowing.FollowingUserID JOIN User ON UserFollowing.UserID = User.UserID WHERE User.UserID = ?");
 			
-			// if($query===false){
-				// return false;
-			// }	
 
 			if ( false===$query) {//debugging mysqli
 				die('prepare() failed: ' . htmlspecialchars($con->error));
@@ -787,11 +767,6 @@ Class Model{
 				PostHashtags.PostID JOIN Hashtag ON PostHashtags.HashtagID = Hashtag.HashtagID JOIN 
 				HashtagFollowing ON Hashtag.HashtagID = HashtagFollowing.HashtagID JOIN User ON 
 				HashtagFollowing.UserID = User.UserID WHERE User.UserID = ?");
-			
-			// if ( false===$query) {//debugging mysqli
-				// die('prepare() failed: ' . htmlspecialchars($con->error));
-				// return false;
-			// }
 			
 			
 			$query->bind_param("d",$userID);
